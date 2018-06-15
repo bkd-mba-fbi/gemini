@@ -29,9 +29,8 @@ namespace ReplaceParagraph
             string htmlString = htmlText;
             try
             {
-                var stringOriginatorType = originatorType;
 
-                if (IssueOriginatorType.Breeze == stringOriginatorType)
+                if (IssueOriginatorType.Breeze == originatorType)
                 {
                     string pattern = "(<p class=\"MsoNormal\">(.*)>&nbsp;<(.*)</p>|(?s)<table class=\"MsoNormalTable\"(.*)</table>)";
                     Regex regex = new Regex(pattern);
@@ -156,7 +155,7 @@ namespace ReplaceParagraph
         {
             get
             {
-                return "Format HTML String from E-Mail comments and task description";
+                return "Replace Paragraph and Format HTML String from incoming E-Mail over Breeze App (created comments and description Regex Pattern: '(<p class=\"MsoNormal\">(.*)>&nbsp;<(.*)</p>|(?s)<table class=\"MsoNormalTable\"(.*)</table>)' )";
             }
             set
             {
