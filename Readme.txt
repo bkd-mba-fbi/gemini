@@ -1,0 +1,1 @@
+In diesem Projekt werden alle Gemini Custom Apps verwaltet.
