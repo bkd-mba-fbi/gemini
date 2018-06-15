@@ -1,0 +1,12 @@
+﻿<app>
+  <guid>09B081E3-D07D-4E8B-9F78-7C0D27C54092</guid>
+  <name>Unlock User</name>
+  <description>Sending E-Mail to locked User and unlock after 15 minutes</description>
+  <version-major>1</version-major>
+  <version-minor>0</version-minor>
+  <version-patch>0</version-patch>
+  <publisher>FBI</publisher>
+  <released>2018-05-08</released>
+  <javascript></javascript>
+  <debug>true</debug>
+</app>

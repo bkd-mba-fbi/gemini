@@ -1,0 +1,12 @@
+﻿<app>
+  <guid>44D3C69A-FFF1-4A3D-8756-55A30D84CBC0</guid>
+  <name>Replace Paragraph</name>
+  <description>Format HTML String from E-Mail comments and task description</description>
+  <version-major>1</version-major>
+  <version-minor>0</version-minor>
+  <version-patch>0</version-patch>
+  <publisher>FBI</publisher>
+  <released>2018-02-13</released>
+  <javascript></javascript>
+  <debug>false</debug>
+</app>
