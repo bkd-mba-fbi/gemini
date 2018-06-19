@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("SearchFremdID")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("ERZ-MBA-FBI")]
 [assembly: AssemblyProduct("SearchFremdID")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright ©  2018 Fachbereich Infromatikanwendungen")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

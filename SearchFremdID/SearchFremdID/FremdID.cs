@@ -203,7 +203,7 @@ namespace SearchFremdID
         {
             get
             {
-                return "Searching after Fremd-ID in Task description or comments and set Fremd-ID";
+                return "Search for foreign Id with RegEx in task description or comments and set customfield. Configure the RegEx pattern and the name of the custom field in the App.config file.";
             }
             set
             {

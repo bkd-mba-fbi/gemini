@@ -5,6 +5,7 @@ using Countersoft.Gemini.Commons.Permissions;
 using Countersoft.Gemini.Contracts;
 using Countersoft.Gemini.Extensibility.Events;
 using Countersoft.Gemini.Infrastructure.Managers;
+using Countersoft.Gemini.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -88,7 +89,7 @@ namespace UserDomain
         }
 
         /// <summary>
-        /// This method adds a watcher if it has the same domain as from email-address
+        /// This method adds a watcher if it has the same domain as from email-address. Only if user is not watcher as on this task.
         /// </summary>
         /// <param name="context"></param>
         /// <param name="domainValue"></param>
@@ -100,34 +101,47 @@ namespace UserDomain
 
             foreach (UserDto user in users)
             {
-                string activeUserDomain = FindDomain(user.Entity.Email);
-                if (domainValue == activeUserDomain)
+                if (!issue.Watchers.Contains(user.Entity.Id.ToString()))
                 {
-                    issue.AddWatcher(user.Entity.Id);
-                    string watcher = user.Entity.Fullname;
-                    CreateAuditlog(context, issue.Id, issue.ProjectId, null, "", watcher, userId, username);
+                    string activeUserDomain = FindDomain(user.Entity.Email);
+                    if (domainValue == activeUserDomain)
+                    {
+                        issue.AddWatcher(user.Entity.Id);
+                        string watcher = user.Entity.Fullname;
+                        CreateAuditlog(context, issue.Id, issue.ProjectId, null, "", watcher, userId, username);
+                    }
                 }
             }
         }
 
         /// <summary>
-        /// The app procedures is in the BeforeCreateFull-Listener. In the first step it checks if the Ersteller OE field is empty.
+        /// In the first step it checks if the Ersteller OE field is empty.
         /// After that it adds the domain and creates an auditlog. The next section is to get the App.config value.
         /// The last step is to check if the domain is in the blacklist.
         /// </summary>
         /// <param name="args"></param>
-        /// <returns></returns>
-        public void AfterCreateFull(IssueDtoEventArgs args)
+        public void RunLogic(IssueDtoEventArgs args)
         {
+
             CustomFieldDataDto erstellerOEField = args.Issue.CustomFields.Find(field => field.Name.Equals(GetAppConfigValue("customFieldNameDomain")));
-            if (erstellerOEField.Entity.Data == String.Empty)
+         
+            if (string.IsNullOrEmpty(erstellerOEField.Entity.Data) || string.IsNullOrEmpty(erstellerOEField.FormattedData))
             {
                 string maildomain = FindDomain(args.Issue.OriginatorData);
-
-                if (maildomain != "")
+                if (string.IsNullOrEmpty(maildomain))
                 {
+                    UserManager userManager = new UserManager(GeminiApp.Cache(), GeminiApp.UserContext(), args.Context);
+                    UserDto creatorUser = userManager.Get(args.Issue.Entity.Creator);
+                    maildomain = FindDomain(creatorUser.Entity.Email);
+                }
+               
+
+                if (!string.IsNullOrEmpty(maildomain))
+                {
+                    
                     string beforeDomainValue = erstellerOEField.Entity.Data;
                     string domainValue = erstellerOEField.Entity.Data = maildomain;
+
                     IssueManager issueManager = new IssueManager(GeminiApp.Cache(), GeminiApp.UserContext(), args.Context);
                     CreateAuditlog(args.Context, args.Issue.Entity.Id, args.Issue.Entity.ProjectId, erstellerOEField, beforeDomainValue, domainValue, args.User.Id, args.User.Fullname);
                     issueManager.Update(args.Issue);
@@ -150,6 +164,16 @@ namespace UserDomain
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// The app procedures is in the BeforeCreateFull-Listener. 
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public void AfterCreateFull(IssueDtoEventArgs args)
+        {
+            RunLogic(args);
         }
 
         public void AfterAssign(IssueEventArgs args)
@@ -199,7 +223,7 @@ namespace UserDomain
 
         public void AfterUpdateFull(IssueDtoEventArgs args)
         {
-            throw new NotImplementedException();
+            RunLogic(args);
         }
 
         public void AfterWatcherAdd(IssueEventArgs args)
@@ -223,7 +247,7 @@ namespace UserDomain
         {
             get
             {
-                return "Searching after User Domain from Task and set User Domain";
+                return "Specify the task creator's domain in a custom field and add each user from the same domain as watcher expects blacklist domains. Configure the blacklist domain and the custom field in the App.config file.";
             }
             set
             {

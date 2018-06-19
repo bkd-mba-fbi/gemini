@@ -88,7 +88,7 @@ namespace UnlockUser
         /// <param name="language"></param>
         public void SendMail(User entity, DateTime currentTime, DateTime unlockTime, IssueManager issueManager)
         {
-            string log;
+            string log = null;
             IGlobalConfigurationWidgetStore dataStore = issueManager.GeminiContext.GlobalConfigurationWidgetStore;
             int intervalMinutes = Convert.ToInt32(GetInterval(dataStore).IntervalInMinutes);
 
