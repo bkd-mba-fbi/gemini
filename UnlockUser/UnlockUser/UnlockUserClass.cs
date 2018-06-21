@@ -67,7 +67,7 @@ namespace UnlockUser
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public string GetAppConfigValue(string settings)
+        public KeyValueConfigurationElement GetAppConfigSettings(string settings)
         {
             ExeConfigurationFileMap configFile = new ExeConfigurationFileMap();
             string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -76,7 +76,7 @@ namespace UnlockUser
             Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFile, ConfigurationUserLevel.None);
             AppSettingsSection appSettings =
                    (AppSettingsSection)config.GetSection("appSettings");
-            return appSettings.Settings[settings].Value;
+            return appSettings.Settings[settings];
         }
 
         /// <summary>
@@ -100,25 +100,27 @@ namespace UnlockUser
             {
                 LogDebugMessage("Benutzer: " + entity.Fullname + " gesperrt.");
                 string timeToUnlock = unlockTime.ToString(@"HH\:mm");
+                KeyValueConfigurationElement mailbodyLanguageSettings = GetAppConfigSettings(String.Concat("mailbody_", language));
+                KeyValueConfigurationElement mailSubjectLanguageSettings = GetAppConfigSettings(String.Concat("mailSubject_", language));
 
-                if (language == GetAppConfigValue("language_de"))
+                if (mailbodyLanguageSettings == null || mailSubjectLanguageSettings == null)
                 {
-                    string mailBodyDe = string.Format(GetAppConfigValue("mailbody_de-DE"), GetAppConfigValue("unlockTime"), "(" + timeToUnlock + " Uhr)");
+                    string mailBody = string.Format(GetAppConfigSettings("mailbody_de-DE").Value, GetAppConfigSettings("unlockTime").Value, "(" + timeToUnlock + ")");
 
-                    if (!EmailHelper.Send(GeminiApp.Config, string.Concat(GetAppConfigValue("mailSubjectDe")),
-                    mailBodyDe,
+                    if (!EmailHelper.Send(GeminiApp.Config, string.Concat(GetAppConfigSettings("mailSubject_de-DE").Value),
+                    mailBody,
                     entity.Email, string.Empty, true, out log))
                     {
                         GeminiApp.LogException(new Exception(log) { Source = "Notification" }, false);
                     }
                     LogDebugMessage("E-Mail Benachrichtigung an " + entity.Fullname + " versendet.");
                 }
-                else if (language == GetAppConfigValue("language_fr"))
+                else
                 {
-                    string mailBodyFr = string.Format(GetAppConfigValue("mailbody_fr-FR"), GetAppConfigValue("unlockTime"), "(" + timeToUnlock + ")");
+                    string mailBody = string.Format(mailbodyLanguageSettings.Value, GetAppConfigSettings("unlockTime").Value, "(" + timeToUnlock + ")");
 
-                    if (!EmailHelper.Send(GeminiApp.Config, string.Concat(GetAppConfigValue("mailSubjectFr")),
-                    mailBodyFr,
+                    if (!EmailHelper.Send(GeminiApp.Config, string.Concat(mailSubjectLanguageSettings.Value),
+                    mailBody,
                     entity.Email, string.Empty, true, out log))
                     {
                         GeminiApp.LogException(new Exception(log) { Source = "Notification" }, false);
@@ -166,7 +168,7 @@ namespace UnlockUser
         public DateTime GetUnlockTime(User entity)
         {
             DateTime lockedTime = entity.Revised.ToLocalTime();
-            int waitTime = Int32.Parse(GetAppConfigValue("unlockTime"));
+            int waitTime = Int32.Parse(GetAppConfigSettings("unlockTime").Value);
             DateTime timeToUnlock = lockedTime.AddMinutes(waitTime);
             return timeToUnlock;
         }
