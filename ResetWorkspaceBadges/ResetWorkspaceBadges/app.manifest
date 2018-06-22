@@ -1,12 +1,12 @@
 ﻿<app>
   <guid>01FDD186-C386-4B78-8D2F-0704510E9C98</guid>
-  <name>Reset Workspace Badges</name>
-  <description>Reset the Badge Count in Workspace</description>
+  <name>Reset or decrement Workspace Badges</name>
+  <description>Reset or decrement badge count if the issue not in the workspace filter.</description>
   <version-major>1</version-major>
   <version-minor>0</version-minor>
   <version-patch>0</version-patch>
-  <publisher>FBI</publisher>
-  <released>2018-03-13</released>
+  <publisher>ERZ-MBA-FBI</publisher>
+  <released>2018-06-21</released>
   <javascript></javascript>
   <debug>true</debug>
 </app>
