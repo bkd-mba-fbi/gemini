@@ -1,12 +1,21 @@
 ﻿<app>
   <guid>44D3C69A-FFF1-4A3D-8756-55A30D84CBC0</guid>
   <name>Replace Paragraph</name>
+<<<<<<< HEAD
   <description>Format HTML String from E-Mail comments and task description</description>
   <version-major>1</version-major>
   <version-minor>0</version-minor>
   <version-patch>0</version-patch>
   <publisher>FBI</publisher>
   <released>2018-02-13</released>
+=======
+  <description>Replace Paragraph and Format HTML String from incoming E-Mail over Breeze App (created comments and description)</description>
+  <version-major>1</version-major>
+  <version-minor>0</version-minor>
+  <version-patch>0</version-patch>
+  <publisher>ERZ-MBA-FBI</publisher>
+  <released>2018-06-15</released>
+>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
   <javascript></javascript>
   <debug>false</debug>
 </app>

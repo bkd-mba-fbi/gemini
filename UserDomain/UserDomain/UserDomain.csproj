@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Countersoft.Foundation.Commons">
+<<<<<<< HEAD
       <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\Countersoft.Foundation.Commons.dll</HintPath>
     </Reference>
     <Reference Include="Countersoft.Foundation.Contracts">
@@ -50,6 +51,24 @@
     </Reference>
     <Reference Include="Countersoft.Gemini.Extensibility">
       <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\Countersoft.Gemini.Extensibility.dll</HintPath>
+=======
+      <HintPath>bin\Debug\Countersoft.Foundation.Commons.dll</HintPath>
+    </Reference>
+    <Reference Include="Countersoft.Foundation.Contracts">
+      <HintPath>bin\Debug\Countersoft.Foundation.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="Countersoft.Gemini">
+      <HintPath>bin\Debug\Countersoft.Gemini.dll</HintPath>
+    </Reference>
+    <Reference Include="Countersoft.Gemini.Commons">
+      <HintPath>bin\Debug\Countersoft.Gemini.Commons.dll</HintPath>
+    </Reference>
+    <Reference Include="Countersoft.Gemini.Contracts">
+      <HintPath>bin\Debug\Countersoft.Gemini.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="Countersoft.Gemini.Extensibility">
+      <HintPath>bin\Debug\Countersoft.Gemini.Extensibility.dll</HintPath>
+>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -74,7 +93,12 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>cd %25windir%25\system32\inetsrv
+<<<<<<< HEAD
 appcmd stop apppool /apppool.name:GeminiPNA</PreBuildEvent>
+=======
+appcmd stop apppool /apppool.name:GeminiPNA
+</PreBuildEvent>
+>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>"C:\Program Files\7-Zip\7z.exe" a "$(ProjectName).zip" "$(TargetPath)" "$(ProjectDir)app.manifest" "$(ProjectDir)App.config"

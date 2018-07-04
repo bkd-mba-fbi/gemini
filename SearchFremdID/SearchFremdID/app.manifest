@@ -1,7 +1,11 @@
 ﻿<app>
   <guid>E56F3E06-FEA7-4BC5-BE14-D081A993AFA3</guid>
   <name>Search Fremd-ID</name>
+<<<<<<< HEAD
   <description>Searching after Fremd-ID in Task description or comments and set Fremd-ID</description>
+=======
+  <description>Search for foreign Id with RegEx in task description or comments and set customfield. Configure the RegEx pattern and the name of the custom field in the App.config file.</description>
+>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
   <version-major>1</version-major>
   <version-minor>0</version-minor>
   <version-patch>0</version-patch>

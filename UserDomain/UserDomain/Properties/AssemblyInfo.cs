@@ -8,9 +8,15 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("UserDomain")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
+<<<<<<< HEAD
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("UserDomain")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
+=======
+[assembly: AssemblyCompany("ERZ-MBA-FBI")]
+[assembly: AssemblyProduct("UserDomain")]
+[assembly: AssemblyCopyright("Copyright ©  2018 Fachbereich Informatikanwendungen")]
+>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

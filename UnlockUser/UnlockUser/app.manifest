@@ -1,11 +1,19 @@
 ﻿<app>
   <guid>09B081E3-D07D-4E8B-9F78-7C0D27C54092</guid>
   <name>Unlock User</name>
+<<<<<<< HEAD
   <description>Sending E-Mail to locked User and unlock after 15 minutes</description>
   <version-major>1</version-major>
   <version-minor>0</version-minor>
   <version-patch>0</version-patch>
   <publisher>FBI</publisher>
+=======
+  <description>Sending E-Mail to locked User and unlock after configured unlocktime (app.config) in  minutes. Also configure mail subject and body für all user languages (app.config).</description>
+  <version-major>1</version-major>
+  <version-minor>0</version-minor>
+  <version-patch>0</version-patch>
+  <publisher>ERZ-MBA-FBI</publisher>
+>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
   <released>2018-05-08</released>
   <javascript></javascript>
   <debug>true</debug>

@@ -36,10 +36,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Countersoft.Gemini.Commons">
+<<<<<<< HEAD
       <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\Countersoft.Gemini.Commons.dll</HintPath>
     </Reference>
     <Reference Include="Countersoft.Gemini.Extensibility">
       <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\Countersoft.Gemini.Extensibility.dll</HintPath>
+=======
+      <HintPath>..\ReplaceParagraph\bin\Debug\Countersoft.Gemini.Commons.dll</HintPath>
+>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

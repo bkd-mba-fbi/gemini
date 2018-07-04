@@ -21,7 +21,11 @@ namespace UnlockUser
     [AppType(AppTypeEnum.Timer),
     AppGuid("09B081E3-D07D-4E8B-9F78-7C0D27C54092"),
     AppName("Unlock User"),
+<<<<<<< HEAD
     AppDescription("Sending E-Mail to locked User and unlock after 15 minutes")]
+=======
+    AppDescription("Sending E-Mail to locked User and unlock after configured unlocktime (app.config) in  minutes. Also configure mail subject and body für all user languages (app.config).")]
+>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
 
     public class UnlockUserClass : TimerJob
     {
@@ -100,6 +104,7 @@ namespace UnlockUser
             {
                 LogDebugMessage("Benutzer: " + entity.Fullname + " gesperrt.");
                 string timeToUnlock = unlockTime.ToString(@"HH\:mm");
+<<<<<<< HEAD
                 KeyValueConfigurationElement mailbodyLanguageSettings = GetAppConfigSettings(String.Concat("mailbody_", language));
                 KeyValueConfigurationElement mailSubjectLanguageSettings = GetAppConfigSettings(String.Concat("mailSubject_", language));
 
@@ -114,6 +119,46 @@ namespace UnlockUser
                         GeminiApp.LogException(new Exception(log) { Source = "Notification" }, false);
                     }
                     LogDebugMessage("E-Mail Benachrichtigung an " + entity.Fullname + " versendet.");
+=======
+                KeyValueConfigurationElement mailbodyLanguageSettings = GetAppConfigSettings(string.Concat("mailbody_", language));
+                KeyValueConfigurationElement mailSubjectLanguageSettings = GetAppConfigSettings(string.Concat("mailSubject_", language));
+                
+                if (mailbodyLanguageSettings == null || mailSubjectLanguageSettings == null)
+                {
+                   
+                    UserManager usermanager = new UserManager(issueManager);
+                    List<UserDto> users = usermanager.GetActiveUsers();
+                    foreach (UserDto user in users)
+                    {
+                        if (user.IsGlobalAdmin)
+                        {
+
+                            if (!EmailHelper.Send(GeminiApp.Config, "Unlock User App: failure in App.config file", string.Concat(@"<style>
+div.container {
+background-color: #ffffff;
+}
+div.container p {
+font-family: Arial;
+font-size: 14px;
+font-style: normal;
+font-weight: normal;
+text-decoration: none;
+text-transform: none;
+color: #000000;
+background-color: #ffffff;
+}
+</style>
+
+<div class='container'>
+<p>Please create a key for mailbody_ and mailSubject_ in app.config file for user language >>", language ,@"</p><p></p><p>Also Unlock user: ", entity.Username,"</p></div>"), user.Entity.Email, string.Empty, true, out log))
+                            {
+                                    GeminiApp.LogException(new Exception(log) { Source = "Notification" }, false);
+                            }
+                            LogDebugMessage("E-Mail Benachrichtigung an " + entity.Fullname + " versendet.");
+		                }  
+                    }
+
+>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
                 }
                 else
                 {

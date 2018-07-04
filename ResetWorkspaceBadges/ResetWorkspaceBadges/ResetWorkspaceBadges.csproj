@@ -50,6 +50,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+<<<<<<< HEAD
+=======
+    <Reference Include="System.Web" />
+>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -57,7 +61,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Compile Include="IssuesIndicator.cs" />
+=======
+    <Compile Include="ResetWorkspaceBadges.cs" />
+>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
