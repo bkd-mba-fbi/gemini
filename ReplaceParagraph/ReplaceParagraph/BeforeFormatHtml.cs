@@ -33,7 +33,7 @@ namespace ReplaceParagraph
 
                 if (IssueOriginatorType.Breeze == stringOriginatorType)
                 {
-                    string pattern = "(<p class=\"MsoNormal\">(.*)>&nbsp;<(.*)</p>|(?s)<table class=\"MsoNormalTable\"(.*)</table>)";
+                    string pattern = @"((<o:p>)?(&nbsp;)?(<\/o:p>)|(?s)<table class=\""MsoNormalTable\""(.*)<\/table>)";
                     Regex regex = new Regex(pattern);
                     htmlString = regex.Replace(htmlString, String.Empty);
                 }
