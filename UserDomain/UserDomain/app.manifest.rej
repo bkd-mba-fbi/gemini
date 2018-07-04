@@ -1,0 +1,24 @@
+diff a/UserDomain/UserDomain/app.manifest b/UserDomain/UserDomain/app.manifest	(rejected hunks)
+@@ -1,12 +1,21 @@
+ ﻿<app>
+   <guid>D8C62E01-7F6A-474B-B891-695AE9872CC6</guid>
+   <name>User Domain</name>
++<<<<<<< HEAD
+   <description>Searching after User Domain from Task and set User Domain</description>
+   <version-major>1</version-major>
+   <version-minor>0</version-minor>
+   <version-patch>0</version-patch>
+   <publisher>FBI</publisher>
+   <released>2018-05-04</released>
++=======
++  <description>Specify the task creator's domain in a custom field and add each user from the same domain as watcher expects blacklist domains. Configure the blacklist domain and the custom field in the App.config file.</description>
++  <version-major>1</version-major>
++  <version-minor>0</version-minor>
++  <version-patch>0</version-patch>
++  <publisher>ERZ-MBA-FBI</publisher>
++  <released>2018-06-15</released>
++>>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
+   <javascript></javascript>
+   <debug>true</debug>
+ </app>
+\ No newline at end of file

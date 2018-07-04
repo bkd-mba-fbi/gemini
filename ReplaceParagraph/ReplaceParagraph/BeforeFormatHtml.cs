@@ -156,8 +156,9 @@ namespace ReplaceParagraph
         {
             get
             {
-                return "Format HTML String from E-Mail comments and task description";
-            }
+                return "Replace Paragraph and Format HTML String from incoming E-Mail over Breeze App (created comments and description)";
+            }                
+                
             set
             {
                 throw new NotImplementedException();

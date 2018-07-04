@@ -21,11 +21,7 @@ namespace UnlockUser
     [AppType(AppTypeEnum.Timer),
     AppGuid("09B081E3-D07D-4E8B-9F78-7C0D27C54092"),
     AppName("Unlock User"),
-<<<<<<< HEAD
-    AppDescription("Sending E-Mail to locked User and unlock after 15 minutes")]
-=======
     AppDescription("Sending E-Mail to locked User and unlock after configured unlocktime (app.config) in  minutes. Also configure mail subject and body für all user languages (app.config).")]
->>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
 
     public class UnlockUserClass : TimerJob
     {
@@ -104,22 +100,6 @@ namespace UnlockUser
             {
                 LogDebugMessage("Benutzer: " + entity.Fullname + " gesperrt.");
                 string timeToUnlock = unlockTime.ToString(@"HH\:mm");
-<<<<<<< HEAD
-                KeyValueConfigurationElement mailbodyLanguageSettings = GetAppConfigSettings(String.Concat("mailbody_", language));
-                KeyValueConfigurationElement mailSubjectLanguageSettings = GetAppConfigSettings(String.Concat("mailSubject_", language));
-
-                if (mailbodyLanguageSettings == null || mailSubjectLanguageSettings == null)
-                {
-                    string mailBody = string.Format(GetAppConfigSettings("mailbody_de-DE").Value, GetAppConfigSettings("unlockTime").Value, "(" + timeToUnlock + ")");
-
-                    if (!EmailHelper.Send(GeminiApp.Config, string.Concat(GetAppConfigSettings("mailSubject_de-DE").Value),
-                    mailBody,
-                    entity.Email, string.Empty, true, out log))
-                    {
-                        GeminiApp.LogException(new Exception(log) { Source = "Notification" }, false);
-                    }
-                    LogDebugMessage("E-Mail Benachrichtigung an " + entity.Fullname + " versendet.");
-=======
                 KeyValueConfigurationElement mailbodyLanguageSettings = GetAppConfigSettings(string.Concat("mailbody_", language));
                 KeyValueConfigurationElement mailSubjectLanguageSettings = GetAppConfigSettings(string.Concat("mailSubject_", language));
                 
@@ -158,7 +138,6 @@ background-color: #ffffff;
 		                }  
                     }
 
->>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
                 }
                 else
                 {
