@@ -34,24 +34,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Countersoft.Foundation.Commons">
-<<<<<<< HEAD
-      <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\Countersoft.Foundation.Commons.dll</HintPath>
-    </Reference>
-    <Reference Include="Countersoft.Foundation.Contracts">
-      <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\Countersoft.Foundation.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="Countersoft.Gemini">
-      <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\Countersoft.Gemini.dll</HintPath>
-    </Reference>
-    <Reference Include="Countersoft.Gemini.Commons">
-      <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\Countersoft.Gemini.Commons.dll</HintPath>
-    </Reference>
-    <Reference Include="Countersoft.Gemini.Contracts">
-      <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\Countersoft.Gemini.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="Countersoft.Gemini.Extensibility">
-      <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\Countersoft.Gemini.Extensibility.dll</HintPath>
-=======
       <HintPath>bin\Debug\Countersoft.Foundation.Commons.dll</HintPath>
     </Reference>
     <Reference Include="Countersoft.Foundation.Contracts">
@@ -68,7 +50,6 @@
     </Reference>
     <Reference Include="Countersoft.Gemini.Extensibility">
       <HintPath>bin\Debug\Countersoft.Gemini.Extensibility.dll</HintPath>
->>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -99,15 +80,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"C:\Program Files\7-Zip\7z.exe" a "$(ProjectName).zip" "$(TargetPath)" "$(ProjectDir)app.manifest"
-<<<<<<< HEAD
-"C:\Windows\System32\xcopy.exe" "$(ProjectName).zip" "C:\inetpub\wwwroot\GeminiPNA\App_Data\apps" /Y
-RD /S /Q "C:\inetpub\wwwroot\GeminiPNA\App_Data\apps\Replace_Paragraph-44D3C69A-FFF1-4A3D-8756-55A30D84CBC0"
-cd %25windir%25\system32\inetsrv
-appcmd start apppool /apppool.name:GeminiPNA</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>cd %25windir%25\system32\inetsrv
-=======
 "C:\Windows\System32\xcopy.exe" "$(ProjectName).zip" if $(ConfigurationName) == Debug "C:\inetpub\wwwroot\GeminiPNA\App_Data\apps" /Y
 RD /S /Q "C:\inetpub\wwwroot\GeminiPNA\App_Data\apps\Replace_Paragraph-44D3C69A-FFF1-4A3D-8756-55A30D84CBC0"
 %25windir%25\system32\inetsrv
@@ -116,7 +88,6 @@ appcmd start apppool /apppool.name:GeminiPNA
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>%25windir%25\system32\inetsrv
->>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
 appcmd stop apppool /apppool.name:GeminiPNA</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
