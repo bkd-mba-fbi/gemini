@@ -35,8 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-<<<<<<< HEAD
-=======
     <Reference Include="Countersoft.Foundation.Commons">
       <HintPath>..\UserDomain\bin\Debug\Countersoft.Foundation.Commons.dll</HintPath>
     </Reference>
@@ -52,7 +50,6 @@
     <Reference Include="Countersoft.Gemini.Contracts">
       <HintPath>..\UserDomain\bin\Debug\Countersoft.Gemini.Contracts.dll</HintPath>
     </Reference>
->>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
     <Reference Include="Countersoft.Gemini.Extensibility">
       <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\Countersoft.Gemini.Extensibility.dll</HintPath>
     </Reference>
