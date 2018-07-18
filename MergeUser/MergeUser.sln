@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergeUser", "MergeUser\MergeUser.csproj", "{B657E747-94FD-45B1-9607-360FA9EB2BE7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{DCA33F9D-918E-4E84-89A1-EDCF1400D414}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B657E747-94FD-45B1-9607-360FA9EB2BE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B657E747-94FD-45B1-9607-360FA9EB2BE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B657E747-94FD-45B1-9607-360FA9EB2BE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCA33F9D-918E-4E84-89A1-EDCF1400D414}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCA33F9D-918E-4E84-89A1-EDCF1400D414}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCA33F9D-918E-4E84-89A1-EDCF1400D414}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCA33F9D-918E-4E84-89A1-EDCF1400D414}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

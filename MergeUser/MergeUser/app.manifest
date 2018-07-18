@@ -1,7 +1,7 @@
 ﻿<app>
   <guid>6C7AF4E9-B848-41C1-BA8D-3BABD6EBD864</guid>
   <name>Merge User</name>
-  <description>Merge disabled users and delete user. The time is configurable, when the user should be merged and deleted. That can be configured in the config-File.</description>
+  <description>Merge disabled users after a certain time and delete them. The duration from the 'lastupdated' date and also the default user is configurable. Those can be configured in the App-Config file.</description>
   <version-major>1</version-major>
   <version-minor>1</version-minor>
   <version-patch>0</version-patch>
