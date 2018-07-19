@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MergeUser")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("ERZ-MBA-FBI")]
 [assembly: AssemblyProduct("MergeUser")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright © 2018 Fachbereich Informatikanwendungen")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
