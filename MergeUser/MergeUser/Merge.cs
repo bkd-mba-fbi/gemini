@@ -20,7 +20,7 @@ namespace MergeUser
     [AppType(AppTypeEnum.Timer),
         AppGuid("6C7AF4E9-B848-41C1-BA8D-3BABD6EBD864"),
         AppName("Merge User"),
-        AppDescription("Merge disabled users after a certain time and delete them. The duration from the 'lastupdated' date and also the default user is configurable. Those can be configured in the App-Config file.")]
+        AppDescription("Merge disabled users after a certain time and delete them. The duration from the 'lastupdated' date and also the default user is configurable. These can be configured in the App-Config file.")]
 
     public class Merge : TimerJob
     {
@@ -107,7 +107,7 @@ namespace MergeUser
         }
 
         /// <summary>
-        /// Checks the disabled users and merge/delete these users
+        /// Checks the disabled users and executes the MergeAndDelete-Method
         /// </summary>
         /// <param name="issueManager"></param>
         public void CheckDisabledUsers(IssueManager issueManager)
