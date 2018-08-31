@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -69,20 +70,20 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="app.manifest" />
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>cd %25windir%25\system32\inetsrv
-appcmd stop apppool /apppool.name:GeminiPNA
-</PreBuildEvent>
+    <PreBuildEvent>::C:\windows\system32\inetsrv\appcmd.exe stop apppool /apppool.name:Gemini</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>"C:\Program Files\7-Zip\7z.exe" a "$(ProjectName).zip" "$(TargetPath)" "$(ProjectDir)app.manifest" "$(ProjectDir)App.config"
-"C:\Windows\System32\xcopy.exe" "$(ProjectName).zip" "C:\inetpub\wwwroot\GeminiPNA\App_Data\apps" /Y
-RD /S /Q "C:\inetpub\wwwroot\GeminiPNA\App_Data\apps\User_Domain-D8C62E01-7F6A-474B-B891-695AE9872CC6
-cd %25windir%25\system32\inetsrv
-appcmd start apppool /apppool.name:GeminiPNA</PostBuildEvent>
+"C:\Windows\System32\xcopy.exe" "$(ProjectName).zip" "E:\webapps\Gemini\App_Data\apps" /Y
+REM RD /S /Q "E:\webapps\Gemini\apps\User_Domain-D8C62E01-7F6A-474B-B891-695AE9872CC6
+REM cd %25windir%25\system32\inetsrv
+REM appcmd start apppool /apppool.name:Gemini</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

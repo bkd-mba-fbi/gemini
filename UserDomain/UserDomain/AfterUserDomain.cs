@@ -5,16 +5,12 @@ using Countersoft.Gemini.Commons.Permissions;
 using Countersoft.Gemini.Contracts;
 using Countersoft.Gemini.Extensibility.Events;
 using Countersoft.Gemini.Infrastructure.Managers;
-using Countersoft.Gemini.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace UserDomain
 {
@@ -38,6 +34,7 @@ namespace UserDomain
             catch (Exception exception)
             {
                 GeminiApp.LogException(exception, false, exception.Message);
+                GeminiApp.LogException("UserDomain function FindDomain", "UserDomain function FindDomain", false);
             }
             return domain;
         }
@@ -54,8 +51,7 @@ namespace UserDomain
             string appConfigFileName = Path.Combine(assemblyFolder, "App.config");
             configFile.ExeConfigFilename = appConfigFileName;
             Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFile, ConfigurationUserLevel.None);
-            AppSettingsSection appSettings =
-                   (AppSettingsSection)config.GetSection("appSettings");
+            AppSettingsSection appSettings = (AppSettingsSection)config.GetSection("appSettings");
             return appSettings.Settings[settings].Value;
         }
 
@@ -70,22 +66,31 @@ namespace UserDomain
         /// <param name="afterValue"></param>
         public void CreateAuditlog(GeminiContext context, int issueId, int issueProjectId, CustomFieldDataDto customField, string beforeValue, string afterValue, int userId, string username)
         {
-            IssueAuditManager issueAuditManager = new IssueAuditManager(GeminiApp.Cache(), GeminiApp.UserContext(), context);
-            UserManager userManager = new UserManager(GeminiApp.Cache(), GeminiApp.UserContext(), context);
-            IssueAudit audit = issueAuditManager.GetIssueAuditObject(issueId, issueProjectId);
-            audit.UserId = userId;
-            audit.Fullname = username;
-                            
-            if (customField == null)
+            try
             {
-                issueAuditManager.LogChange(audit, ItemAttributeVisibility.AssociatedWatchers,
-                    string.Empty, string.Empty, beforeValue, afterValue);
+                IssueAuditManager issueAuditManager = new IssueAuditManager(GeminiApp.Cache(), GeminiApp.UserContext(), context);
+                UserManager userManager = new UserManager(GeminiApp.Cache(), GeminiApp.UserContext(), context);
+                IssueAudit audit = issueAuditManager.GetIssueAuditObject(issueId, issueProjectId);
+                audit.UserId = userId;
+                audit.Fullname = username;
+
+                if (customField == null)
+                {
+                    issueAuditManager.LogChange(audit, ItemAttributeVisibility.AssociatedWatchers,
+                        string.Empty, string.Empty, beforeValue, afterValue);
+                }
+                else
+                {
+                    issueAuditManager.LogChange(audit, ItemAttributeVisibility.AssociatedCustomFields, customField.Entity.CustomFieldId.ToString(),
+                        string.Empty, string.Empty, beforeValue, afterValue);
+                }
             }
-            else
+            catch (Exception exception)
             {
-                issueAuditManager.LogChange(audit, ItemAttributeVisibility.AssociatedCustomFields, customField.Entity.CustomFieldId.ToString(),
-                string.Empty, string.Empty, beforeValue, afterValue);
+                GeminiApp.LogException(exception, false, exception.Message);
+                GeminiApp.LogException("UserDomain function CreateAuditlog", "UserDomain function CreateAuditlog", false);
             }
+
         }
 
         /// <summary>
@@ -96,21 +101,29 @@ namespace UserDomain
         /// <param name="issue"></param>
         public void AddWatcherFromDomain(GeminiContext context, string domainValue, Issue issue, int userId, string username)
         {
-            UserManager usermanager = new UserManager(GeminiApp.Cache(), GeminiApp.UserContext(), context);
-            List<UserDto> users = usermanager.GetActiveUsers();
-
-            foreach (UserDto user in users)
+            try
             {
-                if (!issue.Watchers.Contains(user.Entity.Id.ToString()))
+                UserManager usermanager = new UserManager(GeminiApp.Cache(), GeminiApp.UserContext(), context);
+                List<UserDto> users = usermanager.GetActiveUsers();
+
+                foreach (UserDto user in users)
                 {
-                    string activeUserDomain = FindDomain(user.Entity.Email);
-                    if (domainValue == activeUserDomain)
+                    if (!issue.Watchers.Contains(user.Entity.Id.ToString()))
                     {
-                        issue.AddWatcher(user.Entity.Id);
-                        string watcher = user.Entity.Fullname;
-                        CreateAuditlog(context, issue.Id, issue.ProjectId, null, "", watcher, userId, username);
+                        string activeUserDomain = FindDomain(user.Entity.Email);
+                        if (domainValue == activeUserDomain)
+                        {
+                            issue.AddWatcher(user.Entity.Id);
+                            string watcher = user.Entity.Fullname;
+                            CreateAuditlog(context, issue.Id, issue.ProjectId, null, "", watcher, userId, username);
+                        }
                     }
                 }
+            }
+            catch (Exception exception)
+            {
+                GeminiApp.LogException(exception, false, exception.Message);
+                GeminiApp.LogException("UserDomain function AddWatcherFromDomain", "UserDomain function AddWatcherFromDomain", false);
             }
         }
 
@@ -122,47 +135,52 @@ namespace UserDomain
         /// <param name="args"></param>
         public void RunLogic(IssueDtoEventArgs args)
         {
-
-            CustomFieldDataDto erstellerOEField = args.Issue.CustomFields.Find(field => field.Name.Equals(GetAppConfigValue("customFieldNameDomain")));
-         
-            if (string.IsNullOrEmpty(erstellerOEField.Entity.Data) || string.IsNullOrEmpty(erstellerOEField.FormattedData))
+            try
             {
-                string maildomain = FindDomain(args.Issue.OriginatorData);
-                if (string.IsNullOrEmpty(maildomain))
+                CustomFieldDataDto erstellerOEField = args.Issue.CustomFields.Find(field => field.Name.Equals(GetAppConfigValue("customFieldNameDomain")));
+
+                if (string.IsNullOrEmpty(erstellerOEField.Entity.Data) || string.IsNullOrEmpty(erstellerOEField.FormattedData))
                 {
-                    UserManager userManager = new UserManager(GeminiApp.Cache(), GeminiApp.UserContext(), args.Context);
-                    UserDto creatorUser = userManager.Get(args.Issue.Entity.Creator);
-                    maildomain = FindDomain(creatorUser.Entity.Email);
-                }
-               
+                    string maildomain = FindDomain(args.Issue.OriginatorData);
 
-                if (!string.IsNullOrEmpty(maildomain))
-                {
-                    
-                    string beforeDomainValue = erstellerOEField.Entity.Data;
-                    string domainValue = erstellerOEField.Entity.Data = maildomain;
-
-                    IssueManager issueManager = new IssueManager(GeminiApp.Cache(), GeminiApp.UserContext(), args.Context);
-                    CreateAuditlog(args.Context, args.Issue.Entity.Id, args.Issue.Entity.ProjectId, erstellerOEField, beforeDomainValue, domainValue, args.User.Id, args.User.Fullname);
-                    issueManager.Update(args.Issue);
-
-                    if (GetAppConfigValue("blacklist") != null)
+                    if (string.IsNullOrEmpty(maildomain))
                     {
-                        string forbiddenDomains = GetAppConfigValue("blacklist");
-                        string[] domains = forbiddenDomains.Split(',');
+                        UserManager userManager = new UserManager(GeminiApp.Cache(), GeminiApp.UserContext(), args.Context);
+                        UserDto creatorUser = userManager.Get(args.Issue.Entity.Creator);
+                        maildomain = FindDomain(creatorUser.Entity.Email);
+                    }
+                    else
+                    {
+                        string beforeDomainValue = erstellerOEField.Entity.Data;
+                        string domainValue = erstellerOEField.Entity.Data = maildomain;
 
-                        if (!Array.Exists(domains, element => element == domainValue))
+                        IssueManager issueManager = new IssueManager(GeminiApp.Cache(), GeminiApp.UserContext(), args.Context);
+                        CreateAuditlog(args.Context, args.Issue.Entity.Id, args.Issue.Entity.ProjectId, erstellerOEField, beforeDomainValue, domainValue, args.User.Id, args.User.Fullname);
+                        issueManager.Update(args.Issue);
+
+                        if (GetAppConfigValue("blacklist") != null)
+                        {
+                            string forbiddenDomains = GetAppConfigValue("blacklist");
+                            string[] domains = forbiddenDomains.Split(',');
+
+                            if (!Array.Exists(domains, element => element == domainValue))
+                            {
+                                AddWatcherFromDomain(args.Context, domainValue, args.Issue.Entity, args.User.Id, args.User.Fullname);
+                                issueManager.Update(args.Issue);
+                            }
+                        }
+                        else
                         {
                             AddWatcherFromDomain(args.Context, domainValue, args.Issue.Entity, args.User.Id, args.User.Fullname);
                             issueManager.Update(args.Issue);
                         }
                     }
-                    else
-                    {
-                        AddWatcherFromDomain(args.Context, domainValue, args.Issue.Entity, args.User.Id, args.User.Fullname);
-                        issueManager.Update(args.Issue);
-                    }
                 }
+            }
+            catch (Exception exception)
+            {
+                GeminiApp.LogException(exception, false, exception.Message);
+                GeminiApp.LogException("UserDomain function RunLogic", "UserDomain function RunLogic", false);
             }
         }
 
@@ -178,47 +196,47 @@ namespace UserDomain
 
         public void AfterAssign(IssueEventArgs args)
         {
-            throw new NotImplementedException();
+            GeminiApp.LogException("UserDomain function AfterAssign", "UserDomain function AfterAssign", false);
         }
 
         public void AfterClose(IssueEventArgs args)
         {
-            throw new NotImplementedException();
+            GeminiApp.LogException("UserDomain function AfterClose", "UserDomain function AfterClose", false);
         }
 
         public void AfterComment(IssueCommentEventArgs args)
         {
-            throw new NotImplementedException();
+            GeminiApp.LogException("UserDomain function AfterComment", "UserDomain function AfterComment", false);
         }
 
         public void AfterCreate(IssueEventArgs args)
         {
-            throw new NotImplementedException();
+            GeminiApp.LogException("UserDomain function AfterCreate", "UserDomain function AfterCreate", false);
         }
 
         public void AfterDelete(IssueEventArgs args)
         {
-            throw new NotImplementedException();
+            GeminiApp.LogException("UserDomain function AfterDelete", "UserDomain function AfterDelete", false);
         }
 
         public void AfterIssueCopy(IssueDtoEventArgs args)
         {
-            throw new NotImplementedException();
+            GeminiApp.LogException("UserDomain function AfterIssueCopy", "UserDomain function AfterIssueCopy", false);
         }
 
         public void AfterResolutionChange(IssueEventArgs args)
         {
-            throw new NotImplementedException();
+            GeminiApp.LogException("UserDomain function AfterResolutionChange", "UserDomain function AfterResolutionChange", false);
         }
 
         public void AfterStatusChange(IssueEventArgs args)
         {
-            throw new NotImplementedException();
+            GeminiApp.LogException("UserDomain function AfterStatusChange", "UserDomain function AfterStatusChange", false);
         }
 
         public void AfterUpdate(IssueEventArgs args)
         {
-            throw new NotImplementedException();
+            GeminiApp.LogException("UserDomain function AfterUpdate", "UserDomain function AfterUpdate", false);
         }
 
         public void AfterUpdateFull(IssueDtoEventArgs args)
@@ -228,7 +246,7 @@ namespace UserDomain
 
         public void AfterWatcherAdd(IssueEventArgs args)
         {
-            throw new NotImplementedException();
+            GeminiApp.LogException("UserDomain function AfterWatcherAdd", "UserDomain function AfterWatcherAdd", false);
         }
 
         public string AppGuid
@@ -239,7 +257,7 @@ namespace UserDomain
             }
             set
             {
-                throw new NotImplementedException();
+                GeminiApp.LogException("UserDomain function AppGuid", "UserDomain function AppGuid", false);
             }
         }
 
@@ -251,7 +269,7 @@ namespace UserDomain
             }
             set
             {
-                throw new NotImplementedException();
+                GeminiApp.LogException("UserDomain function Description", "UserDomain function Description", false);
             }
         }
 
@@ -263,7 +281,7 @@ namespace UserDomain
             }
             set
             {
-                throw new NotImplementedException();
+                GeminiApp.LogException("UserDomain function Name", "UserDomain function Name", false);
             }
         }
     }

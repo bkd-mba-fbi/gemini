@@ -8,15 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("UserDomain")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-<<<<<<< HEAD
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("UserDomain")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
-=======
 [assembly: AssemblyCompany("ERZ-MBA-FBI")]
 [assembly: AssemblyProduct("UserDomain")]
 [assembly: AssemblyCopyright("Copyright ©  2018 Fachbereich Informatikanwendungen")]
->>>>>>> e72a7049b512e04b4f70e7e1a57cbd2bd1eccd5d
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -38,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.0.1")]
+[assembly: AssemblyFileVersion("1.0.0.1")]
