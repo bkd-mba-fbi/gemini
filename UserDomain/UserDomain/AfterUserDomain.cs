@@ -45,12 +45,20 @@ namespace UserDomain
         /// <returns></returns>
         public string GetAppConfigValue(string settings)
         {
-            ExeConfigurationFileMap configFile = new ExeConfigurationFileMap();
-            string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string appConfigFileName = Path.Combine(assemblyFolder, "App.config");
-            configFile.ExeConfigFilename = appConfigFileName;
-            Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFile, ConfigurationUserLevel.None);
-            AppSettingsSection appSettings = (AppSettingsSection)config.GetSection("appSettings");
+            AppSettingsSection appSettings = null;
+            try
+            {
+                ExeConfigurationFileMap configFile = new ExeConfigurationFileMap();
+                string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string appConfigFileName = Path.Combine(assemblyFolder, "App.config");
+                configFile.ExeConfigFilename = appConfigFileName;
+                Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFile, ConfigurationUserLevel.None);
+                appSettings = (AppSettingsSection)config.GetSection("appSettings");
+            }
+            catch (Exception exception)
+            {
+                GeminiApp.LogException(exception, false, exception.Message);
+            }
             return appSettings.Settings[settings].Value;
         }
 
@@ -192,47 +200,47 @@ namespace UserDomain
 
         public void AfterAssign(IssueEventArgs args)
         {
-            GeminiApp.LogException("UserDomain function AfterAssign", "UserDomain function AfterAssign", false);
+            throw new NotImplementedException();
         }
 
         public void AfterClose(IssueEventArgs args)
         {
-            GeminiApp.LogException("UserDomain function AfterClose", "UserDomain function AfterClose", false);
+            throw new NotImplementedException();
         }
 
         public void AfterComment(IssueCommentEventArgs args)
         {
-            GeminiApp.LogException("UserDomain function AfterComment", "UserDomain function AfterComment", false);
+            throw new NotImplementedException();
         }
 
         public void AfterCreate(IssueEventArgs args)
         {
-            GeminiApp.LogException("UserDomain function AfterCreate", "UserDomain function AfterCreate", false);
+            throw new NotImplementedException();
         }
 
         public void AfterDelete(IssueEventArgs args)
         {
-            GeminiApp.LogException("UserDomain function AfterDelete", "UserDomain function AfterDelete", false);
+            throw new NotImplementedException();
         }
 
         public void AfterIssueCopy(IssueDtoEventArgs args)
         {
-            GeminiApp.LogException("UserDomain function AfterIssueCopy", "UserDomain function AfterIssueCopy", false);
+            throw new NotImplementedException();
         }
 
         public void AfterResolutionChange(IssueEventArgs args)
         {
-            GeminiApp.LogException("UserDomain function AfterResolutionChange", "UserDomain function AfterResolutionChange", false);
+            throw new NotImplementedException();
         }
 
         public void AfterStatusChange(IssueEventArgs args)
         {
-            GeminiApp.LogException("UserDomain function AfterStatusChange", "UserDomain function AfterStatusChange", false);
+            throw new NotImplementedException();
         }
 
         public void AfterUpdate(IssueEventArgs args)
         {
-            GeminiApp.LogException("UserDomain function AfterUpdate", "UserDomain function AfterUpdate", false);
+            throw new NotImplementedException();
         }
 
         public void AfterUpdateFull(IssueDtoEventArgs args)
@@ -242,7 +250,7 @@ namespace UserDomain
 
         public void AfterWatcherAdd(IssueEventArgs args)
         {
-            GeminiApp.LogException("UserDomain function AfterWatcherAdd", "UserDomain function AfterWatcherAdd", false);
+            throw new NotImplementedException();
         }
 
         public string AppGuid
@@ -253,7 +261,7 @@ namespace UserDomain
             }
             set
             {
-                GeminiApp.LogException("UserDomain function AppGuid", "UserDomain function AppGuid", false);
+                throw new NotImplementedException();
             }
         }
 
@@ -265,7 +273,7 @@ namespace UserDomain
             }
             set
             {
-                GeminiApp.LogException("UserDomain function Description", "UserDomain function Description", false);
+                throw new NotImplementedException();
             }
         }
 
@@ -277,7 +285,7 @@ namespace UserDomain
             }
             set
             {
-                GeminiApp.LogException("UserDomain function Name", "UserDomain function Name", false);
+                throw new NotImplementedException();
             }
         }
     }
