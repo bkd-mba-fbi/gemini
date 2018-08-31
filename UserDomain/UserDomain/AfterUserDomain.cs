@@ -34,7 +34,6 @@ namespace UserDomain
             catch (Exception exception)
             {
                 GeminiApp.LogException(exception, false, exception.Message);
-                GeminiApp.LogException("UserDomain function FindDomain", "UserDomain function FindDomain", false);
             }
             return domain;
         }
@@ -88,7 +87,6 @@ namespace UserDomain
             catch (Exception exception)
             {
                 GeminiApp.LogException(exception, false, exception.Message);
-                GeminiApp.LogException("UserDomain function CreateAuditlog", "UserDomain function CreateAuditlog", false);
             }
 
         }
@@ -123,7 +121,6 @@ namespace UserDomain
             catch (Exception exception)
             {
                 GeminiApp.LogException(exception, false, exception.Message);
-                GeminiApp.LogException("UserDomain function AddWatcherFromDomain", "UserDomain function AddWatcherFromDomain", false);
             }
         }
 
@@ -180,7 +177,6 @@ namespace UserDomain
             catch (Exception exception)
             {
                 GeminiApp.LogException(exception, false, exception.Message);
-                GeminiApp.LogException("UserDomain function RunLogic", "UserDomain function RunLogic", false);
             }
         }
 
