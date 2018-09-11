@@ -49,6 +49,7 @@ E:\User\m7ky\IPA_UserDomain\UserDomain\UserDomain\obj\Debug\UserDomain.csprojRes
 E:\User\mawo\git\Gemini\UserDomain\UserDomain\bin\Debug\UserDomain.dll.config
 E:\User\mawo\git\Gemini\UserDomain\UserDomain\bin\Debug\UserDomain.dll
 E:\User\mawo\git\Gemini\UserDomain\UserDomain\bin\Debug\UserDomain.pdb
+E:\User\mawo\git\Gemini\UserDomain\UserDomain\obj\Debug\UserDomain.csprojAssemblyReference.cache
 E:\User\mawo\git\Gemini\UserDomain\UserDomain\obj\Debug\UserDomain.csproj.CoreCompileInputs.cache
 E:\User\mawo\git\Gemini\UserDomain\UserDomain\obj\Debug\UserDomain.csproj.CopyComplete
 E:\User\mawo\git\Gemini\UserDomain\UserDomain\obj\Debug\UserDomain.dll
