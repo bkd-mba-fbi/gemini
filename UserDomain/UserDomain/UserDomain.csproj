@@ -64,6 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AfterUserDomain.cs" />
+    <Compile Include="BeforeUserDomain.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -76,14 +78,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>::C:\windows\system32\inetsrv\appcmd.exe stop apppool /apppool.name:Gemini</PreBuildEvent>
+    <PreBuildEvent>C:\windows\system32\inetsrv\appcmd.exe stop apppool /apppool.name:Gemini</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>"C:\Program Files\7-Zip\7z.exe" a "$(ProjectName).zip" "$(TargetPath)" "$(ProjectDir)app.manifest" "$(ProjectDir)App.config"
 "C:\Windows\System32\xcopy.exe" "$(ProjectName).zip" "E:\webapps\Gemini\App_Data\apps" /Y
-REM RD /S /Q "E:\webapps\Gemini\apps\User_Domain-D8C62E01-7F6A-474B-B891-695AE9872CC6
-REM cd %25windir%25\system32\inetsrv
-REM appcmd start apppool /apppool.name:Gemini</PostBuildEvent>
+RD /S /Q "E:\webapps\Gemini\App_Data\apps\User_Domain-D8C62E01-7F6A-474B-B891-695AE9872CC6"
+C:\windows\system32\inetsrv\appcmd.exe start apppool /apppool.name:Gemini</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
