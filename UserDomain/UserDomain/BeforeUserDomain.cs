@@ -22,7 +22,9 @@ namespace UserDomain
         {
             try
             {
-                return AddDomainAndSuperuser(args, false);
+                IssueDto issue = AddDomain(args, false);
+                AddSuperuser(args.Context, issue, args.User, false);
+                return issue;
             }
             catch (Exception exception)
             {
@@ -35,26 +37,8 @@ namespace UserDomain
         {
             try
             {
-                return AddDomainAndSuperuser(args, true);
-            }
-            catch (Exception exception)
-            {
-                GeminiApp.LogException(exception, false, exception.Message);
-                return args.Issue;
-            }
-        }
-
-        /// <summary>
-        /// To run AddSuperUser() even if an error in AddDomain() occurs. Also CleanCode: clearer and easier to read.
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        private IssueDto AddDomainAndSuperuser(IssueDtoEventArgs args, bool createAudit)
-        {
-            try
-            {
-                IssueDto issue = AddDomain(args, createAudit);
-                issue = AddSuperuser(args.Context, issue, args.User, createAudit);
+                IssueDto issue = AddDomain(args, true);
+                AddSuperuser(args.Context, issue, args.User, true);
                 return issue;
             }
             catch (Exception exception)
@@ -68,60 +52,55 @@ namespace UserDomain
         /// Add the domain to the custom field, and create an auditlog if it hasn't just been created.
         /// </summary>
         /// <param name="args"></param>
+        /// <param name="createAudit"></param>
         /// <returns></returns>
         private IssueDto AddDomain(IssueDtoEventArgs args, bool createAudit)
         {
             try
             {
-                IssueDto issue = new IssueDto();
-                issue = args.Issue;
+                IssueDto issue = args.Issue;
                 Helper helper = new Helper();
                 if ((issue.CustomFields.Count > 0) && (!issue.CustomFields.Find(field => field.Name.Equals(helper.GetAppConfigValue("customFieldNameDomain"))).ToString().Equals(null)))
                 {
-                    CustomFieldDataDto erstellerOEField = new CustomFieldDataDto();
-                    erstellerOEField = issue.CustomFields.Find(field => field.Name.Equals(helper.GetAppConfigValue("customFieldNameDomain")));
+                    CustomFieldDataDto erstellerOEField = issue.CustomFields.Find(field => field.Name.Equals(helper.GetAppConfigValue("customFieldNameDomain")));
 
-                    // Falls noch keine Domain im OE-Feld
-                    // FormattedData genommen, um manuelle Änderungen möglich zu lassen. Allenfalls könnte .Entity.Data genommen werden.
-                    if (string.IsNullOrEmpty(erstellerOEField.FormattedData))
+                    // If there is no domain in the OE-Field yet
+                    // Depending on wether you want users to manually change the OE-Field or not, .FormattedData or .Entity.Data could be chosen.
+                    if (string.IsNullOrEmpty(erstellerOEField.Entity.Data))
                     {
                         string maildomain = helper.FindDomain(issue.OriginatorData);
 
-                        // Falls keine Emailadresse in OriginatorData vorhanden ist, Emailadresse vom Erstelleruser nehmen
+                        // If no email address in OriginatorData present, take email address from creator user
                         if (string.IsNullOrEmpty(maildomain))
                         {
-                            // Falls via einen anderen User erfasst
+                            UserManager userManager = new UserManager(GeminiApp.Cache(), GeminiApp.UserContext(), args.Context);
+                            int userId;
+
+                            // If created via another user
                             if (issue.Entity.ReportedBy > 0)
                             {
-                                UserManager userManager = new UserManager(GeminiApp.Cache(), GeminiApp.UserContext(), args.Context);
-                                UserDto creatorUser = userManager.Get(issue.Entity.ReportedBy);
-                                maildomain = helper.FindDomain(creatorUser.Entity.Email);
-
+                                userId = issue.Entity.ReportedBy;
                             }
-                            // Falls nicht
+                            // If not
                             else
                             {
-                                UserManager userManager = new UserManager(GeminiApp.Cache(), GeminiApp.UserContext(), args.Context);
-                                UserDto creatorUser = userManager.Get(args.User.Id);
-                                maildomain = helper.FindDomain(creatorUser.Entity.Email);
+                                userId = args.User.Id;
                             }
+                            UserDto creatorUser = userManager.Get(userId);
+                            maildomain = helper.FindDomain(creatorUser.Entity.Email);
                         }
+                        // OriginatorData has email address, no more actions required
 
                         string beforeValue = erstellerOEField.FormattedData;
-                        // OriginatorData enthält Emailadresse, keine zusätzliche Aktion nötig
                         erstellerOEField.Entity.Data = maildomain;
-                        // Komischerweise wird dadurch auch erstellerOEField und args.Issue überschrieben...
                         erstellerOEField.FormattedData = maildomain;
-                        int customFieldsNumber = issue.CustomFields.IndexOf(issue.CustomFields.Find(field => field.Name.Equals(helper.GetAppConfigValue("customFieldNameDomain"))));
-                        issue.CustomFields[customFieldsNumber] = erstellerOEField;
+                        // Keep in mind that args.Issue / issue / erstellerOEField are reference types, not value types
 
-                        // Auditlog erstellen, falls etwas geändert wird
-                        // Nur beim Hinzufügen der ErstellerOE
-                        // Also wenn unterschiedlich
+                        // Create auditlog if being called from BeforeUpdateFull with the auditlog flag
                         if (createAudit)
                         {
-                            // beforeValue -> vorheriger Wert (args.Issue FormattedData -> vorheriger Wert)
-                            // issue FormattedData -> neuer Wert (alternativ erstellerOEField.FormattedData)
+                            // beforeValue -> previous value (args.Issue FormattedData -> previous value)
+                            // issue FormattedData -> new value (alternatively erstellerOEField.FormattedData)
                             if (!beforeValue.Equals(helper.GetFormattedDataErstellerOE(issue)))
                             {
                                 IssueManager issueManager = new IssueManager(GeminiApp.Cache(), GeminiApp.UserContext(), args.Context);
@@ -142,11 +121,13 @@ namespace UserDomain
         }
 
         /// <summary>
-        /// Add user with the same domain (superuser) as watcher
+        /// Add user with the same domain (superuser) as watcher.
         /// </summary>
-        /// <param name="issue"></param>
+        /// <param name="context"></param>
+        /// <param name="issueParam"></param>
         /// <param name="user"></param>
-        private IssueDto AddSuperuser(GeminiContext context, IssueDto issueParam, User user, bool createAudit)
+        /// <param name="createAudit"></param>
+        private void AddSuperuser(GeminiContext context, IssueDto issueParam, User user, bool createAudit)
         {
             try
             {
@@ -154,13 +135,13 @@ namespace UserDomain
                 Helper helper = new Helper();
                 if ((issue.CustomFields.Count > 0) && (!issue.CustomFields.Find(field => field.Name.Equals(helper.GetAppConfigValue("customFieldNameDomain"))).ToString().Equals(null)))
                 {
-                    string domain = issue.CustomFields.Find(field => field.Name.Equals(helper.GetAppConfigValue("customFieldNameDomain"))).Entity.Data;
-                    string domain2 = helper.GetFormattedDataErstellerOE(issue);
+                    // Alternatively .Entity.Data could be chosen.
+                    string domain = helper.GetFormattedDataErstellerOE(issue);
 
-                    // Falls noch etwas zu beachten ist
+                    // If there is something to consider
                     if (helper.GetAppConfigValue("blacklist") != null)
                     {
-                        // Man muss beachten, dass wir ja bereits die Superuser von erz.be.ch sind
+                        // It has to be considered that we already are the superusers of erz.be.ch (and potentially other domains)
                         string forbiddenDomains = helper.GetAppConfigValue("blacklist");
                         string[] domains = forbiddenDomains.Split(',');
 
@@ -173,14 +154,11 @@ namespace UserDomain
                     {
                         AddWatcherFromDomain(context, domain, issue, user.Id, user.Fullname, createAudit);
                     }
-                    return issue;
                 }
-                return issueParam;
             }
             catch (Exception exception)
             {
                 GeminiApp.LogException(exception, false, exception.Message);
-                return issueParam;
             }
         }
 
@@ -188,9 +166,12 @@ namespace UserDomain
         /// Adds a watcher if it has the same domain as the email address. Only if user is not watcher as on this task.
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="domainValue"></param>
-        /// <param name="issue"></param>
-        public IssueDto AddWatcherFromDomain(GeminiContext context, string domain, IssueDto issueParam, int userId, string username, bool createAudit)
+        /// <param name="domain"></param>
+        /// <param name="issueParam"></param>
+        /// <param name="userId"></param>
+        /// <param name="username"></param>
+        /// <param name="createAudit"></param>
+        private void AddWatcherFromDomain(GeminiContext context, string domain, IssueDto issueParam, int userId, string username, bool createAudit)
         {
             try
             {
@@ -217,12 +198,10 @@ namespace UserDomain
                         }
                     }
                 }
-                return issue;
             }
             catch (Exception exception)
             {
                 GeminiApp.LogException(exception, false, exception.Message);
-                return issueParam;
             }
         }
     }
