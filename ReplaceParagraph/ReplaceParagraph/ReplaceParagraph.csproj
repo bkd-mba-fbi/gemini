@@ -79,16 +79,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files\7-Zip\7z.exe" a "$(ProjectName).zip" "$(TargetPath)" "$(ProjectDir)app.manifest"
-"C:\Windows\System32\xcopy.exe" "$(ProjectName).zip" if $(ConfigurationName) == Debug "C:\inetpub\wwwroot\GeminiPNA\App_Data\apps" /Y
-RD /S /Q "C:\inetpub\wwwroot\GeminiPNA\App_Data\apps\Replace_Paragraph-44D3C69A-FFF1-4A3D-8756-55A30D84CBC0"
-%25windir%25\system32\inetsrv
-appcmd start apppool /apppool.name:GeminiPNA
-</PostBuildEvent>
+    <PostBuildEvent>"C:\Program Files\7-Zip\7z.exe" a "$(ProjectName).zip" "$(TargetPath)" "$(ProjectDir)app.manifest" "$(ProjectDir)App.config"
+"C:\Windows\System32\xcopy.exe" "$(ProjectName).zip" "E:\webapps\Gemini\App_Data\apps" /Y
+RD /S /Q "E:\webapps\Gemini\App_Data\apps\Replace_Paragraph-44D3C69A-FFF1-4A3D-8756-55A30D84CBC0"
+C:\windows\system32\inetsrv\appcmd.exe start apppool /apppool.name:Gemini</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>%25windir%25\system32\inetsrv
-appcmd stop apppool /apppool.name:GeminiPNA</PreBuildEvent>
+    <PreBuildEvent>C:\windows\system32\inetsrv\appcmd.exe stop apppool /apppool.name:Gemini</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

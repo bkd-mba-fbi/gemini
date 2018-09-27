@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Countersoft.Gemini.Commons;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ReplaceParagraph;
-using Countersoft.Gemini.Commons;
 
 namespace TestReplaceParagraph
 {

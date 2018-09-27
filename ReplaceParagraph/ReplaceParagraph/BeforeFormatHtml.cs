@@ -4,18 +4,14 @@ using Countersoft.Gemini.Commons.Dto;
 using Countersoft.Gemini.Commons.Entity;
 using Countersoft.Gemini.Extensibility.Events;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ReplaceParagraph
 {
     /// <summary>
     /// BeforeFormatHtml class with an interface IIssueBeforeListener.
     /// </summary>
-    public class BeforeFormatHtml: IIssueBeforeListener
+    public class BeforeFormatHtml : IIssueBeforeListener
     {
         /// <summary>
         /// This method checks if the html-string is from originator Type "Breeze".
@@ -157,8 +153,8 @@ namespace ReplaceParagraph
             get
             {
                 return "Replace Paragraph and Format HTML String from incoming E-Mail over Breeze App (created comments and description)";
-            }                
-                
+            }
+
             set
             {
                 throw new NotImplementedException();

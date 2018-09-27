@@ -65,7 +65,7 @@ namespace UserDomain
                     CustomFieldDataDto erstellerOEField = issue.CustomFields.Find(field => field.Name.Equals(helper.GetAppConfigValue("customFieldNameDomain")));
 
                     // If there is no domain in the OE-Field yet
-                    // Depending on wether you want users to manually change the OE-Field or not, .FormattedData or .Entity.Data could be chosen.
+                    // Depending on whether you want users to manually change the OE-Field or not, .FormattedData or .Entity.Data could be chosen.
                     if (string.IsNullOrEmpty(erstellerOEField.Entity.Data))
                     {
                         string maildomain = helper.FindDomain(issue.OriginatorData);
