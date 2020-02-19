@@ -14,8 +14,10 @@ namespace ReplaceParagraph
     public class BeforeFormatHtml : IIssueBeforeListener
     {
         /// <summary>
-        /// This method checks if the html-string is from originator Type "Breeze".
-        /// Every Breeze Type html-string will be formatted. So every paragraphs will be replaced by string.empty.
+        /// Reformats the Gemini HTML text from comments and ticket description to remove unnecessary and annoying paragraphs.
+        /// Whether the ticket or comment has been created by Breeze or manually by a user does not matter.
+        /// Since the HTML pattern is a bit more complex, not every paragraph gets replaced by string.empty, but instead
+        /// different steps adjust the necessary changes in the HTML.
         /// </summary>
         /// <param name="htmlText"></param>
         /// <param name="originatorType"></param>
@@ -25,14 +27,36 @@ namespace ReplaceParagraph
             string htmlString = htmlText;
             try
             {
-                var stringOriginatorType = originatorType;
+                string unescapedCLRFPattern = @"(\r\n)";
+                string copiedContentDivPattern = @"(<\/{0,1}div[^>]*>)";
+                string copiedContentBrPattern = @"(<\/{0,1}br \w[^>]*>)";
+                string copiedContentParagraphPattern = @"(<\/{0,1}p \w[^>]*>)";
 
-                if (IssueOriginatorType.Breeze == stringOriginatorType)
-                {
-                    string pattern = @"((<o:p>)|(&nbsp;)?(<\/o:p>)|(?s)<table class=\""MsoNormalTable\""(.*)<\/table>)";
-                    Regex regex = new Regex(pattern);
-                    htmlString = regex.Replace(htmlString, String.Empty);
-                }
+                string emptyParagraphsPattern = @"(<p[^>]*>\s+<\/p>)";
+                string paragraphPattern = @"(<\/p><p[^>]*>)";
+                string emptyBreakPattern = @"(<br \/>\s+<br \/>)";
+                string enclosingParagraphPattern = @"(<\/{0,1}p[^>]*>)";
+                string reduceTooManyBreaksPattern = @"(<\/{0,1}br[^>]*>){3,}";
+
+                Regex unescapedCLRFRegex = new Regex(unescapedCLRFPattern);
+                htmlString = unescapedCLRFRegex.Replace(htmlString, String.Empty);
+                Regex copiedContentDivRegex = new Regex(copiedContentDivPattern);
+                htmlString = copiedContentDivRegex.Replace(htmlString, String.Empty);
+
+                Regex emptyParagraphsRegex = new Regex(emptyParagraphsPattern);
+                htmlString = emptyParagraphsRegex.Replace(htmlString, String.Empty);
+                Regex paragraphRegex = new Regex(paragraphPattern);
+                htmlString = paragraphRegex.Replace(htmlString, "<br /><br />");
+                Regex emptyBreakRegex = new Regex(emptyBreakPattern);
+                htmlString = emptyBreakRegex.Replace(htmlString, String.Empty);
+                Regex enclosingParagrapRegex = new Regex(enclosingParagraphPattern);
+                htmlString = enclosingParagrapRegex.Replace(htmlString, String.Empty);
+
+                // optional, since multiple break elements can be legitimate, but also annyoing
+                // use as preferred
+                Regex reduceBreaksRegex = new Regex(enclosingParagraphPattern);
+                htmlString = reduceTooManyBreaksPattern.Replace(htmlString, "<br /><br />");
+
             }
             catch (Exception e)
             {
@@ -42,7 +66,7 @@ namespace ReplaceParagraph
         }
 
         /// <summary>
-        /// Before a comment will be created, the comment will be formatted and overwritten.
+        /// Before a comment will be created, the comment will be reformatted.
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -55,14 +79,14 @@ namespace ReplaceParagraph
             catch (Exception e)
             {
                 int issueID = args.Entity.Id;
-                string message = string.Format("IssueID: {0}", issueID);
+                string message = string.Format("Exception BeforeComment: {0}. IssueID: {1}", e.Message, issueID);
                 GeminiApp.LogException(e, false, message);
             }
             return args.Entity;
         }
 
         /// <summary>
-        /// Before a task will be created, the description will be formatted and overwritten.
+        /// Before a task will be created, the description will be reformatted.
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -152,7 +176,7 @@ namespace ReplaceParagraph
         {
             get
             {
-                return "Replace Paragraph and Format HTML String from incoming E-Mail over Breeze App (created comments and description)";
+                return "Replace paragraph and format HTML string from incoming E-Mail over Breeze App (created comments and description)";
             }
 
             set

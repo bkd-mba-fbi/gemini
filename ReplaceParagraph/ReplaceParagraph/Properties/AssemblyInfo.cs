@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ReplaceParagraph")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ERZ-MBA-FBI")]
+[assembly: AssemblyCompany("BKD-MBA-FBI")]
 [assembly: AssemblyProduct("ReplaceParagraph")]
-[assembly: AssemblyCopyright("Copyright ©  2018 Fachbereich Inforamtikanwendungen")]
+[assembly: AssemblyCopyright("Copyright ©  2020 Fachbereich Inforamtikanwendungen")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
