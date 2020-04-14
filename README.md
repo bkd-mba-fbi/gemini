@@ -3,7 +3,7 @@ Use product [documentation](https://docs.countersoft.com/developing-custom-apps/
 
 # Apps
 ## Event
-* [Replace Paragraph](../#replace-paragraph)
+* [Replace Paragraph](#replace-paragraph)
 * [Search Fremd ID](../wiki/Dokumentation#search-fremd-id)
 * [User Domain](../wiki/Dokumentation#user-domain)
 ## Timer
