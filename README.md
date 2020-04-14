@@ -4,12 +4,12 @@ Use product [documentation](https://docs.countersoft.com/developing-custom-apps/
 # Apps
 ## Event
 * [Replace Paragraph](#replace-paragraph)
-* [Search Fremd ID](../wiki/Dokumentation#search-fremd-id)
-* [User Domain](../wiki/Dokumentation#user-domain)
+* [Search Fremd ID](#search-fremd-id)
+* [User Domain](#user-domain)
 ## Timer
-* [Reset Workspace Badges](../wiki/Dokumentation#reset-workspace-badges)
-* [Unlock User](../wiki/Dokumentation#unlock-user)
-* [Merge User](../wiki/Dokumentation#merge-user)
+* [Reset Workspace Badges](#reset-workspace-badges)
+* [Unlock User](#unlock-user)
+* [Merge User](#merge-user)
 
 ## Replace Paragraph
 Diese App wurde als Event App programmiert. Es soll dazu dienen die einkommenden E-Mail-Kommentare und E-Mail Tasks neu zu formatieren. Bis jetzt kommen die Kommentare und Taskbeschreibungen unformatiert in das Gemini System. Dadurch haben die Texte überflüssige Zeilenabstände und Tabellen, was der Übersicht schadet.
