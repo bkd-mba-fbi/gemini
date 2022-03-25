@@ -34,23 +34,29 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Countersoft.Foundation.Commons">
-      <HintPath>bin\Debug\Countersoft.Foundation.Commons.dll</HintPath>
+    <Reference Include="Countersoft.Foundation.Commons, Version=5.0.0.3530, Culture=neutral, PublicKeyToken=0e17ff0349390ca9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\webapps\Gemini\bin\Countersoft.Foundation.Commons.dll</HintPath>
     </Reference>
-    <Reference Include="Countersoft.Foundation.Contracts">
-      <HintPath>bin\Debug\Countersoft.Foundation.Contracts.dll</HintPath>
+    <Reference Include="Countersoft.Foundation.Contracts, Version=5.0.0.3530, Culture=neutral, PublicKeyToken=0e17ff0349390ca9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\webapps\Gemini\bin\Countersoft.Foundation.Contracts.dll</HintPath>
     </Reference>
-    <Reference Include="Countersoft.Gemini">
-      <HintPath>bin\Debug\Countersoft.Gemini.dll</HintPath>
+    <Reference Include="Countersoft.Gemini, Version=6.8.1.5187, Culture=neutral, PublicKeyToken=7d1cd24c5b90fda4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\webapps\Gemini\bin\Countersoft.Gemini.dll</HintPath>
     </Reference>
-    <Reference Include="Countersoft.Gemini.Commons">
-      <HintPath>bin\Debug\Countersoft.Gemini.Commons.dll</HintPath>
+    <Reference Include="Countersoft.Gemini.Commons, Version=6.8.1.5187, Culture=neutral, PublicKeyToken=7d1cd24c5b90fda4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\webapps\Gemini\bin\Countersoft.Gemini.Commons.dll</HintPath>
     </Reference>
-    <Reference Include="Countersoft.Gemini.Contracts">
-      <HintPath>bin\Debug\Countersoft.Gemini.Contracts.dll</HintPath>
+    <Reference Include="Countersoft.Gemini.Contracts, Version=6.8.1.5187, Culture=neutral, PublicKeyToken=7d1cd24c5b90fda4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\webapps\Gemini\bin\Countersoft.Gemini.Contracts.dll</HintPath>
     </Reference>
-    <Reference Include="Countersoft.Gemini.Extensibility">
-      <HintPath>bin\Debug\Countersoft.Gemini.Extensibility.dll</HintPath>
+    <Reference Include="Countersoft.Gemini.Extensibility, Version=6.8.1.5187, Culture=neutral, PublicKeyToken=7d1cd24c5b90fda4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\webapps\Gemini\bin\Countersoft.Gemini.Extensibility.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -59,9 +65,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\System.Web.Http.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\inetpub\wwwroot\GeminiPNA\bin\System.Web.Mvc.dll</HintPath>
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\..\..\..\..\..\webapps\Gemini\bin\System.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />

@@ -1,10 +1,8 @@
 ﻿using Countersoft.Gemini;
-using Countersoft.Gemini.Commons;
 using Countersoft.Gemini.Commons.Dto;
 using Countersoft.Gemini.Commons.Entity;
 using Countersoft.Gemini.Extensibility.Events;
 using System;
-using System.Text.RegularExpressions;
 
 namespace ReplaceParagraph
 {
@@ -14,55 +12,16 @@ namespace ReplaceParagraph
     public class BeforeFormatHtml : IIssueBeforeListener
     {
         /// <summary>
-        /// Reformats the Gemini HTML text from comments and ticket description to remove unnecessary and annoying paragraphs.
-        /// Whether the ticket or comment has been created by Breeze or manually by a user does not matter.
-        /// Since the HTML pattern is a bit more complex, not every paragraph gets replaced by string.empty, but instead
-        /// different steps adjust the necessary changes in the HTML.
+        /// Replace html empty paragraph "<p> </p>" with ""
         /// </summary>
         /// <param name="htmlText"></param>
-        /// <param name="originatorType"></param>
         /// <returns></returns>
-        public string FormatHtmlString(string htmlText, IssueOriginatorType originatorType)
+        public string FormatHtmlString(string htmlText)
         {
-            string htmlString = htmlText;
-            try
-            {
-                string unescapedCLRFPattern = @"(\r\n)";
-                string copiedContentDivPattern = @"(<\/{0,1}div[^>]*>)";
-                string copiedContentBrPattern = @"(<\/{0,1}br \w[^>]*>)";
-                string copiedContentParagraphPattern = @"(<\/{0,1}p \w[^>]*>)";
-
-                string emptyParagraphsPattern = @"(<p[^>]*>\s+<\/p>)";
-                string paragraphPattern = @"(<\/p><p[^>]*>)";
-                string emptyBreakPattern = @"(<br \/>\s+<br \/>)";
-                string enclosingParagraphPattern = @"(<\/{0,1}p[^>]*>)";
-                string reduceTooManyBreaksPattern = @"(<\/{0,1}br[^>]*>){3,}";
-
-                Regex unescapedCLRFRegex = new Regex(unescapedCLRFPattern);
-                htmlString = unescapedCLRFRegex.Replace(htmlString, String.Empty);
-                Regex copiedContentDivRegex = new Regex(copiedContentDivPattern);
-                htmlString = copiedContentDivRegex.Replace(htmlString, String.Empty);
-
-                Regex emptyParagraphsRegex = new Regex(emptyParagraphsPattern);
-                htmlString = emptyParagraphsRegex.Replace(htmlString, String.Empty);
-                Regex paragraphRegex = new Regex(paragraphPattern);
-                htmlString = paragraphRegex.Replace(htmlString, "<br /><br />");
-                Regex emptyBreakRegex = new Regex(emptyBreakPattern);
-                htmlString = emptyBreakRegex.Replace(htmlString, String.Empty);
-                Regex enclosingParagrapRegex = new Regex(enclosingParagraphPattern);
-                htmlString = enclosingParagrapRegex.Replace(htmlString, String.Empty);
-
-                // optional, since multiple break elements can be legitimate, but also annyoing
-                // use as preferred
-                Regex reduceBreaksRegex = new Regex(enclosingParagraphPattern);
-                htmlString = reduceTooManyBreaksPattern.Replace(htmlString, "<br /><br />");
-
-            }
-            catch (Exception e)
-            {
-                GeminiApp.LogException(e, false, e.Message);
-            }
-            return htmlString;
+            string formatedHtml = htmlText;
+            formatedHtml = htmlText.Replace("<p> </p>", "");
+            //formatedHtml = formatedHtml.Replace("</p>\r\n<p>", "<br>");
+            return formatedHtml;
         }
 
         /// <summary>
@@ -74,7 +33,7 @@ namespace ReplaceParagraph
         {
             try
             {
-                args.Entity.Comment = FormatHtmlString(args.Entity.Comment, args.Entity.OriginatorType);
+                args.Entity.Comment = FormatHtmlString(args.Entity.Comment);
             }
             catch (Exception e)
             {
@@ -94,7 +53,7 @@ namespace ReplaceParagraph
         {
             try
             {
-                args.Entity.Description = FormatHtmlString(args.Entity.Description, args.Entity.OriginatorType);
+                args.Entity.Description = FormatHtmlString(args.Entity.Description);
             }
             catch (Exception e)
             {
