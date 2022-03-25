@@ -12,16 +12,13 @@ Use product [documentation](https://docs.countersoft.com/developing-custom-apps/
 * [Merge User](#merge-user)
 
 ## Replace Paragraph
-Diese App wurde als Event App programmiert. Es soll dazu dienen die einkommenden E-Mail-Kommentare und E-Mail Tasks neu zu formatieren. Bis jetzt kommen die Kommentare und Taskbeschreibungen unformatiert in das Gemini System. Dadurch haben die Texte überflüssige Zeilenabstände und Tabellen, was der Übersicht schadet.
-Mit einem «EventListener» sollten diese überflüssigen Abstände entfernt werden, nachdem ein Kommentar oder ein Task per E-Mail erfasst wurde. Damit erscheinen die Texte von der Beschreibung und vom Kommentar im Gemini viel sauberer und übersichtlicher.
+Diese App wurde als Event App programmiert. Es soll dazu dienen die einkommenden E-Mail-Kommentare und E-Mail Tasks neu zu formatieren. Bis jetzt kommen die Kommentare und Taskbeschreibungen unformatiert in das Gemini System. Dadurch haben die Texte überflüssige leere Zeilen, was der Übersicht schadet.
+Mit einem «EventListener» werden diese überflüssigen leeren Zeilen entfernt werden, bevor ein Kommentar oder ein Task per E-Mail erfasst wurde. Damit erscheinen die Texte von der Beschreibung und vom Kommentar im Gemini viel sauberer und übersichtlicher.
 ### Anforderungen
-* Einkommende E-Mail-Kommentare werden formatiert → Originator Typ: Breeze
-* Die Beschreibung der einkommenden E-Mail Tasks müssen formatiert werden → Originator Typ: Breeze
+* Einkommende E-Mail-Kommentare werden formatiert
+* Die Beschreibung der einkommenden E-Mail Tasks müssen formatiert werden
 * Ein «IssueBeforeListener» Interface wird benötigt um «Before»-Ereignisse erkennen zu können
-* Mit einer Regex werden die überflüssigen Paragraphen und Tabellen herausgefiltert
-* Alle überflüssigen Paragraphen werden mit einem «string.Empty» ersetzt
-* Alle überflüssigen Tabellen werden ebenfalls mit «string.Empty» entfernt
-
+* Überflüssige Zeilen werden mit folgedem Code htmlText.Replace("<p> </p>", "") entfernt.
 ## Search Fremd ID
 Bei den Arbeiten im Support kommt es immer wieder vor, dass Probleme an weitere Anbieter zur Bearbeitung weitergegeben werden. Diese Anbieter verwenden ihre eigenen Tickettools und vergeben dem Task eine eigene ID, welche in Gemini zur Nachverfolgung notiert wird. Mit der neuen Gemini-Version steht ein benutzerdefiniertes Feld «Fremd-ID» zur Verfügung, in das die ID der externen Tools eingefügt werden soll. Die «Search Fremd ID» App erkennt Fremd-IDs automatisch in den Taskbeschreibungen oder Kommentaren. Die gefundene ID wird ins Feld «Fremd-ID» geschrieben. Die einheitliche Erfassung der Fremd-IDs soll der verbesserten Übersichtlichkeit der Tasks dienen.
 ### Anforderungen
