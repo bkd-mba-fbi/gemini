@@ -3,6 +3,7 @@ using Countersoft.Gemini.Commons.Dto;
 using Countersoft.Gemini.Commons.Entity;
 using Countersoft.Gemini.Extensibility.Events;
 using System;
+using System.Text.RegularExpressions;
 
 namespace ReplaceParagraph
 {
@@ -13,14 +14,18 @@ namespace ReplaceParagraph
     {
         /// <summary>
         /// Replace html empty paragraph "<p> </p>" with ""
+        /// or Empty eMail to Ticketline
         /// </summary>
         /// <param name="htmlText"></param>
         /// <returns></returns>
         public string FormatHtmlString(string htmlText)
         {
             string formatedHtml = htmlText;
+            
             formatedHtml = htmlText.Replace("<p> </p>", "");
-            //formatedHtml = formatedHtml.Replace("</p>\r\n<p>", "<br>");
+            formatedHtml = htmlText.Replace("<p class=\"MsoNormal\"> </p>", "");           
+            formatedHtml = formatedHtml.Replace("<p class=\"MsoNormal\"><span lang=\"DE-CH\"><o:p>&nbsp;</o:p></span></p>", "");
+            formatedHtml = formatedHtml.Replace("<p class=\"MsoNormal\"><o:p>&nbsp;</o:p></p>\r\n", "");
             return formatedHtml;
         }
 
@@ -101,6 +106,16 @@ namespace ReplaceParagraph
 
         public Issue BeforeUpdate(IssueEventArgs args)
         {
+            try
+            {
+                args.Entity.Description = FormatHtmlString(args.Entity.Description);
+            }
+            catch (Exception e)
+            {
+                int issueID = args.Entity.Id;
+                string message = string.Format("IssueID: {0}", issueID);
+                GeminiApp.LogException(e, false, message);
+            }
             return args.Entity;
         }
 

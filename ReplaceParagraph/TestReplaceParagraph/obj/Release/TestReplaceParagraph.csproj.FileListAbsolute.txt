@@ -99,3 +99,7 @@ E:\User\mawo\git\Gemini\ReplaceParagraph\TestReplaceParagraph\obj\Release\TestRe
 E:\User\mawo\git\Gemini\ReplaceParagraph\TestReplaceParagraph\obj\Release\TestReplaceParagraph.csproj.CopyComplete
 E:\User\mawo\git\Gemini\ReplaceParagraph\TestReplaceParagraph\obj\Release\TestReplaceParagraph.dll
 E:\User\mawo\git\Gemini\ReplaceParagraph\TestReplaceParagraph\obj\Release\TestReplaceParagraph.pdb
+E:\User\mwkp\Repos\gemini\ReplaceParagraph\TestReplaceParagraph\obj\Release\TestReplaceParagraph.csprojAssemblyReference.cache
+E:\User\mwkp\Repos\gemini\ReplaceParagraph\TestReplaceParagraph\obj\Release\TestReplaceParagraph.csproj.CoreCompileInputs.cache
+E:\User\mwkp\Repos\gemini\ReplaceParagraph\TestReplaceParagraph\obj\Release\TestReplaceParagraph.dll
+E:\User\mwkp\Repos\gemini\ReplaceParagraph\TestReplaceParagraph\obj\Release\TestReplaceParagraph.pdb

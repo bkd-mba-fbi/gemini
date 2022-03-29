@@ -148,3 +148,7 @@ E:\User\m7ky\GITReposClone\ReplaceParagraph\TestReplaceParagraph\bin\Debug\Repla
 E:\User\m7ky\GITReposClone\ReplaceParagraph\TestReplaceParagraph\obj\Debug\TestReplaceParagraph.csprojResolveAssemblyReference.cache
 E:\User\m7ky\GITReposClone\ReplaceParagraph\TestReplaceParagraph\obj\Debug\TestReplaceParagraph.dll
 E:\User\m7ky\GITReposClone\ReplaceParagraph\TestReplaceParagraph\obj\Debug\TestReplaceParagraph.pdb
+E:\User\mwkp\Repos\gemini\ReplaceParagraph\TestReplaceParagraph\obj\Debug\TestReplaceParagraph.csprojAssemblyReference.cache
+E:\User\mwkp\Repos\gemini\ReplaceParagraph\TestReplaceParagraph\obj\Debug\TestReplaceParagraph.csproj.CoreCompileInputs.cache
+E:\User\mwkp\Repos\gemini\ReplaceParagraph\TestReplaceParagraph\obj\Debug\TestReplaceParagraph.dll
+E:\User\mwkp\Repos\gemini\ReplaceParagraph\TestReplaceParagraph\obj\Debug\TestReplaceParagraph.pdb
