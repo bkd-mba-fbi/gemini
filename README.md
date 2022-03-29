@@ -18,7 +18,7 @@ Mit einem «EventListener» werden diese überflüssigen leeren Zeilen entfernt 
 * Einkommende E-Mail-Kommentare werden formatiert
 * Die Beschreibung der einkommenden E-Mail Tasks müssen formatiert werden
 * Ein «IssueBeforeListener» Interface wird benötigt um «Before»-Ereignisse erkennen zu können
-* Überflüssige Zeilen werden mit folgedem Code htmlText.Replace("<p> </p>", "") entfernt.
+* Überflüssige Zeilen werden mit folgedem Code `htmlText.Replace("<p> </p>", "")` entfernt.
 ## Search Fremd ID
 Bei den Arbeiten im Support kommt es immer wieder vor, dass Probleme an weitere Anbieter zur Bearbeitung weitergegeben werden. Diese Anbieter verwenden ihre eigenen Tickettools und vergeben dem Task eine eigene ID, welche in Gemini zur Nachverfolgung notiert wird. Mit der neuen Gemini-Version steht ein benutzerdefiniertes Feld «Fremd-ID» zur Verfügung, in das die ID der externen Tools eingefügt werden soll. Die «Search Fremd ID» App erkennt Fremd-IDs automatisch in den Taskbeschreibungen oder Kommentaren. Die gefundene ID wird ins Feld «Fremd-ID» geschrieben. Die einheitliche Erfassung der Fremd-IDs soll der verbesserten Übersichtlichkeit der Tasks dienen.
 ### Anforderungen
