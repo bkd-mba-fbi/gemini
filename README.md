@@ -7,6 +7,7 @@ Use product [documentation](https://docs.countersoft.com/developing-custom-apps/
 * [Search Fremd ID](#search-fremd-id)
 * [User Domain](#user-domain)
 ## Timer
+* [Jira Sync](#jira-sync)
 * [Reset Workspace Badges](#reset-workspace-badges)
 * [Unlock User](#unlock-user)
 * [Merge User](#merge-user)
@@ -42,6 +43,31 @@ Tasks in Gemini können mittels Breeze-Applikation direkt per E-Mail erstellt we
 * Alle mit dieser Domain erfassten Gemini-User werden als Task Beobachter (Watcher) an den Task hinzugefügt. Ausnahme: Domains auf einer Blacklist (AppConfig key=blacklist). 
 * Die App wird beim Erstellen eines Tasks ausgeführt.
 * Sicherstellen, dass ein Auditlog (Historie) geschrieben wird
+
+## Jira Sync
+Diese Timerapp synchronisiert Daten aus Jira mit Gemini. In der App.Config.json können mehrere Jira Services konfiguriert werden. 
+
+### Anforderungen
+* Es können mehrere Jira Services angebunden werden
+* Der Search POST body kann konfiguriert werden
+* maxResults und fields können übergeben werden
+* Der Ziel Projektname von Gemini kann angegeben werden. Es werden alle Tasks in diesem Projekt erstellt oder verschoben falls sie bereits existieren.
+* Es kann der CustomFieldName wo der Jira Key gesucht oder geschrieben werden soll angegeben werden
+* Es kann eine Standard Komponente angegeben werden die jedem Jira Task angehängt wird.
+* Folgende Felder werden synchronisiert
+  * issuetype
+  * priority
+  * resolution
+  * status
+  * components
+  * fixVersion Fehlende Versionen werden erfasst und aktualisiert mit den Eigenschaften Name, Label, Released und ReleaseDate
+* Beim erstellen oder aktualisieren des Issues in Gemini wird
+  * Der Link des Issue als `target="_blank"` in die Description eingefügt (`{jiraServiceUrl.Scheme}://{jiraServiceUrl.Host}/browse/{issuekeyJira}`) 
+  * Die Spezial formatierung aus Jira wird übernommen. Einzig `\r\n` wird durch `<br>` ersetzt.
+* Log
+  * Fehlerhafte Mapping Einträge werden im Log protokolliert.
+  * Updates werden protokoliert falls wirklich änderungen am Issue gemacht wurden.
+  * Exeption werden im Log protokoliert.
 
 ## Unlock User
 Ein Benutzer von Gemini wird gesperrt, wenn er sich fünf Mal mit dem falschen Passwort anmeldet. Damit die gesperrten Benutzer nicht manuell entsperrt werden müssen, wurde eine Timer App programmiert, die den Benutzer per E-Mail über den Vorfall informiert und die Sperrung nach 15 Minuten (konfigurierbar) wieder entsperrt. Im Inhalt der E-Mail soll auf den Zeitpunkt der Entsperrung sowie auf die Möglichkeit, das Konto vorher durch einen Gemini-Administrator entsperren zu lassen, hingewiesen werden. Die E-Mail soll je nach Sprache des Benutzers auf Deutsch oder Französisch verschickt werden. Diese App hat den Vorteil, dass das Userkonto auch ausserhalb der regulären Arbeitszeiten entsperrt wird.
