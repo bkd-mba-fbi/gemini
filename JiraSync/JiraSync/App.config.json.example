@@ -1,0 +1,159 @@
+﻿{
+    "jiraServices": [
+      {
+        "jiraUrlSearch": "https://jira/rest/api/latest/search",
+        "personalAccessToken": "MyJiraToken",
+        "searchPostBody": {
+          "jql": "project = EVO AND issuetype != 11 AND reporter = currentUser() AND (status != Closed OR updated >= -30d )",
+          "maxResults": 200,
+          "fields": [ "issuetype", "components", "description", "fixVersions", "resolution", "summary", "lastViewed", "priority", "versions", "updated", "status" ]
+        },
+        "targetGeminProject": "EVT",
+        "geminiCustomFieldJiraKey": "FremdId",
+        "defaultComponent": "SLH",
+        "mapping": [
+          {
+            "property": "issuetype",
+            "source": "Bug",
+            "target": "Bug"
+          },
+          {
+            "property": "issuetype",
+            "source": "Change Request",
+            "target": "Change Request"
+          },
+          {
+            "property": "priority",
+            "source": "Blocker",
+            "target": "Hoch"
+          },
+          {
+            "property": "priority",
+            "source": "Critical",
+            "target": "Mittel"
+          },
+          {
+            "property": "priority",
+            "source": "Major",
+            "target": "Tief"
+          },
+          {
+            "property": "priority",
+            "source": "Minor",
+            "target": "Tief"
+          },
+          {
+            "property": "priority",
+            "source": "Trivial",
+            "target": "Tief"
+          },
+          {
+            "property": "resolution",
+            "source": "Ausgeliefert",
+            "target": "Komplett"
+          },
+          {
+            "property": "resolution",
+            "source": "Beantwortet",
+            "target": "Komplett"
+          },
+          {
+            "property": "resolution",
+            "source": "Duplikat",
+            "target": "Duplikat"
+          },
+          {
+            "property": "status",
+            "source": "In Bearbeitung",
+            "target": "In Abklärung"
+          },
+          {
+            "property": "status",
+            "source": "zurückstellen",
+            "target": "In Abklärung"
+          },
+          {
+            "property": "status",
+            "source": "Angenommen",
+            "target": "Angenommen"
+          },
+          {
+            "property": "status",
+            "source": "Eingeplant",
+            "target": "Eingeplant"
+          },
+          {
+            "property": "status",
+            "source": "Geschlossen",
+            "target": "Testen"
+          },
+          {
+            "property": "status",
+            "source": "Behoben",
+            "target": "Testen"
+          },
+          {
+            "property": "components",
+            "source": "Lehrgang",
+            "target": "Lehrgang"
+          },
+          {
+            "property": "components",
+            "source": "NewGeneration",
+            "target": "NG"
+          },
+          {
+            "property": "components",
+            "source": "OAuth",
+            "target": "OAuth"
+          },
+          {
+            "property": "components",
+            "source": "Reportmanager",
+            "target": "NG"
+          },
+          {
+            "property": "components",
+            "source": "Reports",
+            "target": "Report"
+          },
+          {
+            "property": "components",
+            "source": "RestAPI",
+            "target": "REST API"
+          },
+          {
+            "property": "components",
+            "source": "SDK",
+            "target": "SDK"
+          },
+          {
+            "property": "components",
+            "source": "Web",
+            "target": "Web"
+          },
+          {
+            "property": "components",
+            "source": "Web-Module",
+            "target": "JSModules"
+          },
+          {
+            "property": "components",
+            "source": "Office",
+            "target": "Office"
+          },
+          {
+            "property": "components",
+            "source": "Kundenspezifische Schnittstelle",
+            "target": "FBI"
+          },
+          {
+            "property": "components",
+            "source": "Admin",
+            "target": "Admin"
+          }
+
+        ]
+      }
+]
+}

@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4A348174-A464-4C09-AA62-C30ECA557224}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JiraSync</RootNamespace>
+    <AssemblyName>JiraSync</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Countersoft.Foundation.Commons, Version=5.0.0.3530, Culture=neutral, PublicKeyToken=0e17ff0349390ca9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Countersoft.Foundation.Commons.dll</HintPath>
+    </Reference>
+    <Reference Include="Countersoft.Foundation.Contracts, Version=5.0.0.3530, Culture=neutral, PublicKeyToken=0e17ff0349390ca9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Countersoft.Foundation.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="Countersoft.Gemini, Version=6.8.1.5187, Culture=neutral, PublicKeyToken=7d1cd24c5b90fda4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Countersoft.Gemini.dll</HintPath>
+    </Reference>
+    <Reference Include="Countersoft.Gemini.Commons, Version=6.8.1.5187, Culture=neutral, PublicKeyToken=7d1cd24c5b90fda4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Countersoft.Gemini.Commons.dll</HintPath>
+    </Reference>
+    <Reference Include="Countersoft.Gemini.Contracts, Version=6.8.1.5187, Culture=neutral, PublicKeyToken=7d1cd24c5b90fda4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Countersoft.Gemini.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="Countersoft.Gemini.Extensibility, Version=6.8.1.5187, Culture=neutral, PublicKeyToken=7d1cd24c5b90fda4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Countersoft.Gemini.Extensibility.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppConfig.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="JiraResponse.cs" />
+    <Compile Include="JiraSync.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="AppConfig.json" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>C:\windows\system32\inetsrv\appcmd.exe stop apppool /apppool.name:Gemini</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files\7-Zip\7z.exe" a "$(ProjectName).zip" "$(TargetPath)" "$(ProjectDir)app.manifest" "$(ProjectDir)App.config" "$(ProjectDir)AppConfig.json"
+"C:\Windows\System32\xcopy.exe" "$(ProjectName).zip" "E:\webapps\Gemini\App_Data\apps" /Y
+RD /S /Q "E:\webapps\Gemini\App_Data\apps\JiraSynch-4a348174-a464-4c09-aa62-c30eca557224"
+C:\windows\system32\inetsrv\appcmd.exe start apppool /apppool.name:Gemini</PostBuildEvent>
+  </PropertyGroup>
+</Project>

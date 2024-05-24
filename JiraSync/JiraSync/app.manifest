@@ -1,0 +1,12 @@
+﻿<app>
+  <guid>4a348174-a464-4c09-aa62-c30eca557224</guid>
+  <name>Jira Synch</name>
+  <description>das ist ein Test</description>
+  <version-major>1</version-major>
+  <version-minor>1</version-minor>
+  <version-patch>0</version-patch>
+  <publisher>BKD-MBA-FBI</publisher>
+  <released>2024-04-06</released>
+  <javascript></javascript>
+  <debug>true</debug>
+</app>
