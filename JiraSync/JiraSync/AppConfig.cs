@@ -2,14 +2,24 @@
 
 namespace JiraSync.Configuration
 {
+    /// <summary>
+    /// AppConfig class represents the configuration settings for the JiraSync application. 
+    /// It contains a list of JiraService objects, each of which holds the necessary information to connect to a Jira instance, perform searches, 
+    /// and map Jira issues to Gemini issues. 
+    /// The AppConfig class serves as the central point for managing the configuration of multiple Jira services that the application may interact with.
+    /// </summary>
     public class AppConfig
     {
         public List<JiraService> JiraServices { get; set; }
     }
 
+    /// <summary>
+    /// JiraService class represents the configuration settings for a specific Jira service.
+    /// </summary>
     public class JiraService
         {
             public string JiraUrlSearch { get; set; }
+            public  string JiraUsername  { get; set; }
             public string PersonalAccessToken { get; set; }
             public SearchPostBody SearchPostBody { get; set; }
             public string TargetGeminProject { get; set; }
@@ -18,9 +28,13 @@ namespace JiraSync.Configuration
             public int GeminiCustomFieldJiraKeyId { get; set; }
             public string DefaultComponent { get; set; }
             public int DefaultComponentId { get; set; }
+            public string FinalTargetStatus { get; set; }
             public List<Mapping> Mapping { get; set; }
         }
-
+    
+        /// <summary>
+        /// Mapping class represents the mapping configuration between Jira and Gemini fields.
+        /// </summary>
         public class Mapping
         {
             public string Property { get; set; }

@@ -1,122 +1,259 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Countersoft.Gemini.Commons.Entity.ProjectTemplates;
+using Newtonsoft.Json;
 
-namespace JiraSync
+namespace JiraSync.Models
 {
-        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-    
+    /// <summary>
+    /// Represents a response from a Jira API containing a collection of issues and pagination information.
+    /// </summary>
     public class JiraResponse
     {
-        public string Expand { get; set; }
-        public int StartAt { get; set; }
-        public int MaxResults { get; set; }
-        public int Total { get; set; }
-        public List<Issue> Issues { get; set; }
-    }
+        [JsonProperty("issues")]
+        public List<Issues> Issues { get; set; }
 
-    public class Component
-    {
-        public string Self { get; set; }
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-    }
+        [JsonProperty("nextPageToken")]
+        public string NextPageToken { get; set; }
 
-    public class Fields
-    {
-        public string Summary { get; set; }
-        public Issuetype Issuetype { get; set; }
-        public DateTime? LastViewed { get; set; }
-        public List<Component> Components { get; set; }
-        public List<Version> Versions { get; set; }
-        public string Description { get; set; }
-        public List<FixVersion> FixVersions { get; set; }
-        public Priority Priority { get; set; }
-        public Resolution Resolution { get; set; }
-        public DateTime Updated { get; set; }
-        public Status Status { get; set; }
-    }
-
-    public class FixVersion
-    {
-        public string Self { get; set; }
-        public string Id { get; set; }
-        public string Description { get; set; }
-        public string Name { get; set; }
-        public bool Archived { get; set; }
-        public bool Released { get; set; }
-        public DateTime ReleaseDate { get; set; }
-    }
-
-    public class Issue
-    {
-        public string Expand { get; set; }
-        public string Id { get; set; }
-        public string Self { get; set; }
-        public string Key { get; set; }
-        public Fields Fields { get; set; }
+        [JsonProperty("isLast")]
+        public bool IsLast { get; set; }
     }
 
     public class Issuetype
     {
+        [JsonProperty("self")]
         public string Self { get; set; }
+
+        [JsonProperty("id")]
         public string Id { get; set; }
+
+        [JsonProperty("description")]
         public string Description { get; set; }
+
+        [JsonProperty("iconUrl")]
         public string IconUrl { get; set; }
+
+        [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("subtask")]
         public bool Subtask { get; set; }
+
+        [JsonProperty("avatarId")]
         public int AvatarId { get; set; }
+
+        [JsonProperty("hierarchyLevel")]
+        public int HierarchyLevel { get; set; }
+    }
+
+    public class Components
+    {
+        [JsonProperty("self")]
+        public string Self { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+    }
+
+    public class Versions
+    {
+        [JsonProperty("self")]
+        public string Self { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("archived")]
+        public bool Archived { get; set; }
+
+        [JsonProperty("released")]
+        public bool Released { get; set; }
+
+        [JsonProperty("releaseDate")]
+        public string ReleaseDate { get; set; }
+    }
+
+    public class Content
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("content")]
+        public List<Children> Children { get; set; }
+    }
+
+    public class Children
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("text")]
+        public string Text { get; set; }
+    }
+
+
+    public class Description
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("version")]
+        public int Version { get; set; }
+
+        [JsonProperty("content")]
+        public List<Content> Content { get; set; }
+    }
+
+    public class FixVersions
+    {
+        [JsonProperty("self")]
+        public string Self { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("archived")]
+        public bool Archived { get; set; }
+
+        [JsonProperty("released")]
+        public bool Released { get; set; }
     }
 
     public class Priority
     {
+        [JsonProperty("self")]
         public string Self { get; set; }
+
+        [JsonProperty("iconUrl")]
         public string IconUrl { get; set; }
+
+        [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("id")]
         public string Id { get; set; }
     }
 
     public class Resolution
     {
+        [JsonProperty("self")]
         public string Self { get; set; }
-        public string Id { get; set; }
-        public string Description { get; set; }
-        public string Name { get; set; }
-    }
 
-
-    public class Status
-    {
-        public string Self { get; set; }
-        public string Description { get; set; }
-        public string IconUrl { get; set; }
-        public string Name { get; set; }
+        [JsonProperty("id")]
         public string Id { get; set; }
-        public StatusCategory StatusCategory { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
     }
 
     public class StatusCategory
     {
+        [JsonProperty("self")]
         public string Self { get; set; }
+
+        [JsonProperty("id")]
         public int Id { get; set; }
+
+        [JsonProperty("key")]
         public string Key { get; set; }
+
+        [JsonProperty("colorName")]
         public string ColorName { get; set; }
+
+        [JsonProperty("name")]
         public string Name { get; set; }
     }
 
-    public class Version
+    public class Status
     {
+        [JsonProperty("self")]
         public string Self { get; set; }
-        public string Id { get; set; }
+
+        [JsonProperty("description")]
         public string Description { get; set; }
+
+        [JsonProperty("iconUrl")]
+        public string IconUrl { get; set; }
+
+        [JsonProperty("name")]
         public string Name { get; set; }
-        public bool Archived { get; set; }
-        public bool Released { get; set; }
-        public string ReleaseDate { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("statusCategory")]
+        public StatusCategory StatusCategory { get; set; }
     }
 
+    public class Fields
+    {
+        [JsonProperty("summary")]
+        public string Summary { get; set; }
 
+        [JsonProperty("lastViewed")]
+        public string LastViewed { get; set; }
+
+        [JsonProperty("issuetype")]
+        public Issuetype Issuetype { get; set; }
+
+        [JsonProperty("components")]
+        public List<Components> Components { get; set; }
+
+        [JsonProperty("versions")]
+        public List<Versions> Versions { get; set; }
+
+        [JsonProperty("description")]
+        public Description Description { get; set; }
+
+        [JsonProperty("fixVersions")]
+        public List<FixVersions> FixVersions { get; set; }
+
+        [JsonProperty("priority")]
+        public Priority Priority { get; set; }
+
+        [JsonProperty("resolution")]
+        public Resolution Resolution { get; set; }
+
+        [JsonProperty("updated")]
+        public string Updated { get; set; }
+
+        [JsonProperty("status")]
+        public Status Status { get; set; }
+    }
+
+    public class Issues
+    {
+        [JsonProperty("expand")]
+        public string Expand { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("self")]
+        public string Self { get; set; }
+
+        [JsonProperty("key")]
+        public string Key { get; set; }
+
+        [JsonProperty("fields")]
+        public Fields Fields { get; set; }
+    }
 }

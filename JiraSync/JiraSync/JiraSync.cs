@@ -1,12 +1,4 @@
-﻿using Countersoft.Gemini;
-using Countersoft.Gemini.Commons.Dto;
-using Countersoft.Gemini.Commons.Entity;
-using Countersoft.Gemini.Extensibility.Apps;
-using Countersoft.Gemini.Infrastructure.Managers;
-using Countersoft.Gemini.Infrastructure.TimerJobs;
-using JiraSync.Configuration;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,6 +7,17 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Countersoft.Gemini;
+using Countersoft.Gemini.Commons.Dto;
+using Countersoft.Gemini.Commons.Entity;
+using Countersoft.Gemini.Extensibility.Apps;
+using Countersoft.Gemini.Infrastructure.Managers;
+using Countersoft.Gemini.Infrastructure.TimerJobs;
+using JiraSync.Configuration;
+using JiraSync.Enums;
+using JiraSync.Models;
+using Newtonsoft.Json;
+using Issues = JiraSync.Models.Issues;
 
 namespace JiraSync
 {
@@ -30,17 +33,23 @@ namespace JiraSync
         private static IssueManager _issueManager;
         private static List<IssueDto> _geminiIssues;
 
-
+        /// <summary>
+        /// Main method that will be called by the Gemini timer job, it will read the appconfig file, 
+        /// get the jira services and then call the JiraSynch method for each jira service.
+        /// </summary>
+        /// <param name="issueManager"></param>
+        /// <returns></returns>
         public override bool Run(IssueManager issueManager)
         {
             _issueManager = issueManager;
             string appconfigFile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\AppConfig.json";
             AppConfig appconfig = JsonConvert.DeserializeObject<AppConfig>(File.ReadAllText(appconfigFile));
             _appConfig = appconfig;
-            _geminiIssues = GetGeminiIssues();
+            
             LogDebugMessage(string.Concat("START: ", DateTime.Now.ToString()));
             foreach (JiraService jiraService in appconfig.JiraServices)
             {
+                _geminiIssues = GetGeminiIssues(jiraService, false);
                 GetMappings(jiraService);
                 JiraSynch(jiraService);
 
@@ -49,6 +58,11 @@ namespace JiraSync
             return true;
         }
 
+        /// <summary>
+        /// Get the interval for the timer job, it will get the interval from the data store, if not found it will return 5 minutes as default interval.
+        /// </summary>
+        /// <param name="dataStore"></param>
+        /// <returns></returns>
         public override TimerJobSchedule GetInterval(Countersoft.Gemini.Contracts.Business.IGlobalConfigurationWidgetStore dataStore)
         {
             var data = dataStore.Get<TimerJobSchedule>(AppGuid);
@@ -60,12 +74,19 @@ namespace JiraSync
 
             return data.Value;
         }
-
+        
+        /// <summary>
+        /// Shutdown method for the timer job, it will be called when the job is stopped.
+        /// </summary>
         public override void Shutdown()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Main method to synchronize Jira issues with Gemini, it will get the jira data, check the versions and check the issues, 
+        /// </summary>
+        /// <param name="jiraService"></param>
         public void JiraSynch(JiraService jiraService)
         {
             try
@@ -74,18 +95,19 @@ namespace JiraSync
                 Task<string> result = GetJiraData(jiraService);
 
                 JiraResponse jiraData = JsonConvert.DeserializeObject<JiraResponse>(result.Result);
-
+     
                 Project project = _issueManager.GeminiContext.Projects.Get(jiraService.TargetGeminProject);
                 jiraService.TargetGeminProjectId = project.Id;
                 jiraService.GeminiCustomFieldJiraKeyId = _issueManager.GeminiContext.CustomFields.GetAll().First(c => c.Name == jiraService.GeminiCustomFieldJiraKey && c.TemplateId == project.TemplateId).Id;
                 jiraService.DefaultComponentId = _issueManager.GeminiContext.Components.GetForProject(jiraService.TargetGeminProjectId).First(c => c.Name == jiraService.DefaultComponent).Id;
 
-                LogDebugMessage($"Jira issues total: {jiraData.Total}");
+                LogDebugMessage($"Jira issues total: {jiraData.Issues.Count}");
+                                
 
-                foreach (Issue issue in jiraData.Issues)
+                foreach (Issues jiraissue in jiraData.Issues)
                 {
-                    CheckVersion(issue, jiraService);
-                    CheckIssue(issue, jiraService);
+                    CheckVersion(jiraissue, jiraService);
+                    CheckIssue(jiraissue, jiraService);
                 }
 
             }
@@ -96,6 +118,12 @@ namespace JiraSync
 
         }
 
+        /// <summary>
+        /// Get the Jira data by calling the Jira API with the search post body, it will return the response as a string, 
+        /// if the response is not 200 OK, it will log an exception.
+        /// </summary>
+        /// <param name="jiraService"></param>
+        /// <returns></returns>
         public async Task<string> GetJiraData(JiraService jiraService)
         {
 
@@ -104,8 +132,15 @@ namespace JiraSync
             string uriSerach = jiraService.JiraUrlSearch;
             try
             {
-                _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", jiraService.PersonalAccessToken);
+
+                var email = jiraService.JiraUsername;
+
+                var authToken = Convert.ToBase64String(
+                    Encoding.ASCII.GetBytes($"{email}:{jiraService.PersonalAccessToken}")
+                );
+
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
+                //new AuthenticationHeaderValue("Bearer", jiraService.PersonalAccessToken);
                 string body = JsonConvert.SerializeObject(jiraService.SearchPostBody).ToString();
                 StringContent content = new StringContent(body, Encoding.UTF8, "application/json");
                 HttpResponseMessage result = _client.PostAsync(uriSerach, content).Result;
@@ -126,21 +161,26 @@ namespace JiraSync
 
         }
 
-        public void CheckVersion(Issue issue, JiraService jiraService)
+        /// <summary>
+        /// Check the versions in the Jira issue, if the version is not exist in Gemini, 
+        /// it will create the version in Gemini, if the version is exist but the released value is different, it will update the version in Gemini.
+        /// </summary>
+        /// <param name="jiraissue"></param>
+        /// <param name="jiraService"></param>
+        public void CheckVersion(Issues jiraissue, JiraService jiraService)
         {
             int projectId = jiraService.TargetGeminProjectId;
             try
             {
                 List<Countersoft.Gemini.Commons.Entity.Version> versions = _issueManager.GeminiContext.Versions.FindWhere(v => v.ProjectId == projectId);
-                foreach (FixVersion fixversion in issue.Fields.FixVersions)
+                foreach (FixVersions fixversion in jiraissue.Fields.FixVersions)
                 {
                     Countersoft.Gemini.Commons.Entity.Version exists = versions.Find(v => v.ProjectId == projectId && v.Name == fixversion.Name);
                     if (exists != null)
                     {
-                        if (exists.Released != fixversion.Released || exists.ReleaseDate != fixversion.ReleaseDate)
+                        if (exists.Released != fixversion.Released)
                         {
                             exists.Released = fixversion.Released;
-                            exists.ReleaseDate = fixversion.ReleaseDate;
 
                             _issueManager.GeminiContext.Versions.Update(exists);
                             LogDebugMessage($"Update Version {exists.Name}");
@@ -157,7 +197,6 @@ namespace JiraSync
                             Name = fixversion.Name,
                             Label = fixversion.Name,
                             Released = fixversion.Released,
-                            ReleaseDate = fixversion.ReleaseDate
                         };
 
                         createVersion = _issueManager.GeminiContext.Versions.Create(createVersion);
@@ -181,14 +220,58 @@ namespace JiraSync
             }
         }
 
-        public void CheckIssue(Issue issue, JiraService jiraService)
+        /// <summary>
+        /// Get the description from the Jira issue, it will concatenate all the text from the content and children of the description field.
+        /// For every text it will add a <br> tag to separate the lines, and also replace the \n and \r with <br> to make sure the line breaks are preserved in Gemini.
+        /// </summary>
+        /// <param name="jiraissue"></param>
+        /// <returns></returns>
+        public string GetDescription(Issues jiraissue)
+        {
+           string description = string.Empty;
+            foreach (Content item in jiraissue.Fields.Description.Content)
+            {
+                if (item.Children != null)
+                {
+                    foreach (var content in item.Children)
+                    {
+                        if (content.Text != null)
+                        {
+                            description += $"<br><br>{content.Text}";
+                        }
+                    }
+                }
+            }
+
+            return description.Replace("\n", "<br>").Replace("\r", "<br>");
+        }
+
+        /// <summary>
+        /// FinalTargetStatus is used to check if the issue is in the final target status, if it is in the final target status, it will not update the status of the issue in Gemini,
+        /// </summary>
+        /// <param name="jiraService"></param>
+        /// <param name="issue"></param>
+        /// <returns></returns>
+        public bool FinalTargetStatus(JiraService jiraService, IssueDto issue) {
+            return jiraService.FinalTargetStatus == issue.Status;
+            }
+
+        /// <summary>
+        /// Check the issue in Gemini, if the issue is exist, it will update the issue in Gemini based on the Jira issue, 
+        /// if the issue is not exist, it will create the issue in Gemini based on the Jira issue.
+        /// Add the link to the Jira issue in the description of the Gemini issue, and also add the custom field value for the Jira key in Gemini to link the issues together.
+        /// </summary>
+        /// <param name="jiraissue"></param>
+        /// <param name="jiraService"></param>
+        public void CheckIssue(Issues jiraissue, JiraService jiraService)
         {
             try
             {
                 bool updated = false;
-                string fremdId = issue.Key;
+                string fremdId = jiraissue.Key;
 
                 IssueDto exists = GetIssue(fremdId, jiraService);
+
 
                 if (exists != null)
                 {
@@ -197,17 +280,21 @@ namespace JiraSync
 
                     updateIssue.Project = _issueManager.GeminiContext.Projects.Get(jiraService.TargetGeminProjectId);
                     updateIssue.Entity.ProjectId = jiraService.TargetGeminProjectId;
-                    updateIssue.Entity.TypeId = GetTarget(jiraService, issue.Fields.Issuetype.Name);
-                    updateIssue.Entity.PriorityId = GetTarget(jiraService, issue.Fields.Priority.Name);
-                    updateIssue.Entity.StatusId = GetTarget(jiraService, issue.Fields.Status.Name);
-                    if (issue.Fields.FixVersions.Count() > 0)
+                    updateIssue.Entity.TypeId = int.Parse(GetTarget(jiraService, jiraissue.Fields.Issuetype.Name, updateIssue, MappingProperty.issuetype));
+                    updateIssue.Entity.PriorityId = int.Parse(GetTarget(jiraService, jiraissue.Fields.Priority.Name, updateIssue, MappingProperty.priority));
+                    if(!FinalTargetStatus(jiraService,updateIssue))
                     {
-                        updateIssue.Entity.FixedInVersionId = _issueManager.GeminiContext.Versions.GetAll().First(v => v.Name == issue.Fields.FixVersions[0].Name && v.ProjectId == jiraService.TargetGeminProjectId).Id;
+                        updateIssue.Entity.StatusId = int.Parse(GetTarget(jiraService, jiraissue.Fields.Status.Name, updateIssue, MappingProperty.status));
+                    }
+                   
+                    if (jiraissue.Fields.FixVersions.Count() > 0)
+                    {
+                        updateIssue.Entity.FixedInVersionId = _issueManager.GeminiContext.Versions.GetAll().First(v => v.Name == jiraissue.Fields.FixVersions[0].Name && v.ProjectId == jiraService.TargetGeminProjectId).Id;
                     }
 
-                    if (issue.Fields.Resolution != null)
+                    if (jiraissue.Fields.Resolution != null)
                     {
-                        updateIssue.Entity.ResolutionId = GetTarget(jiraService, issue.Fields.Resolution.Name);
+                        updateIssue.Entity.ResolutionId = int.Parse(GetTarget(jiraService, jiraissue.Fields.Resolution.Name, updateIssue, MappingProperty.resolution));
                     }
 
                     updateIssue.CustomFields.First(c => c.Entity.Data == fremdId).Entity.CustomFieldId = jiraService.GeminiCustomFieldJiraKeyId;
@@ -219,7 +306,7 @@ namespace JiraSync
 
                     updateIssue.Entity.Description = updateIssue.Description.Replace("\r\n", "<br>")
     ;
-                    updateIssue.Entity.Components = GetComponents(jiraService, issue.Fields.Components, updateIssue.Entity.Components);
+                    updateIssue.Entity.Components = GetComponents(jiraService, jiraissue.Fields.Components, updateIssue);
 
 
                     updated = true;
@@ -232,13 +319,13 @@ namespace JiraSync
 
                 }
 
-                if (!updated && jiraService.Mapping.Exists(t => t.Property == "issuetype" && t.Source == issue.Fields.Issuetype.Name))
+                if (!updated && jiraService.Mapping.Exists(t => t.Property == "issuetype" && t.Source == jiraissue.Fields.Issuetype.Name))
                 {
                     Countersoft.Gemini.Commons.Entity.Issue task = new Countersoft.Gemini.Commons.Entity.Issue
                     {
                         ProjectId = jiraService.TargetGeminProjectId,
-                        Title = issue.Fields.Summary,
-                        Description = GetJiraBrowseUrl(jiraService, fremdId, issue.Fields.Description.Replace("\r\n", "<br>")),
+                        Title = jiraissue.Fields.Summary,
+                        Description = GetJiraBrowseUrl(jiraService, fremdId, GetDescription(jiraissue)),
                         Components = jiraService.DefaultComponentId.ToString()
 
 
@@ -252,27 +339,48 @@ namespace JiraSync
                     updated = true;
 
                 }
-
-
+                
             }
             catch (Exception ex)
             {
-                LogDebugMessage(issue.Key + ex.Message);
+                LogDebugMessage($"{jiraissue.Key}  {ex.Message}");
                 GeminiApp.LogException(ex, true, ex.Message);
             }
         }
 
-        List<IssueDto> GetGeminiIssues()
+        /// <summary>
+        /// since we can not do a direct query to get the issue with the custom field value, 
+        /// we need to get all issues with custom fields and then find the issue with the matching custom field value. 
+        /// This method is used to get all issues with custom fields, if includeClosed is true, it will include closed issues as well and also filter to the appconfig.TargetGeminProject.
+        /// </summary>
+        /// <param name="jiraService"></param>
+        /// <param name="includeClosed"></param>
+        /// <returns></returns>
+        List<IssueDto> GetGeminiIssues(JiraService jiraService, bool includeClosed)
         {
 
             IssuesFilter filter = new IssuesFilter
             {
                 IncludeClosed = false,
             };
+            
+            if (includeClosed)
+            {
+                filter.IncludeClosed = true;
+                filter.Projects = jiraService.TargetGeminProject;
+            }   
             return _issueManager.GetIssues(filter, 1000).Where(c => c.CustomFields.Count() > 0).ToList();
 
         }
 
+        /// <summary>
+        /// Get issue with the matching custom field value, if not found in the already loaded _geminiIssues, 
+        /// it will call GetGeminiIssues with includeClosed = true to include closed issues as well and also filter to the appconfig.TargetGeminProject. 
+        /// If still not found, it will return null.
+        /// </summary>
+        /// <param name="fremdId"></param>
+        /// <param name="jiraService"></param>
+        /// <returns></returns>
         IssueDto GetIssue(string fremdId, JiraService jiraService)
         {
             bool exists = false;
@@ -284,11 +392,25 @@ namespace JiraSync
                     return item;
                 }
             }
-
+      
+             foreach (IssueDto item in GetGeminiIssues(jiraService, true))
+            {
+                exists = item.CustomFields.Exists(f => f.Name == jiraService.GeminiCustomFieldJiraKey && f.Entity.Data == fremdId);
+                if (exists)
+                {
+                    return item;
+                }
+            }
             return null;
 
         }
 
+        /// <summary>
+        /// Get the target id for each mapping based on the source value and the property type, 
+        /// if the mapping is not found, it will log a debug message and return 0 as target id.
+        /// </summary>
+        /// <param name="jiraService"></param>
+        /// <returns></returns>
         public JiraService GetMappings(JiraService jiraService)
         {
             try
@@ -330,13 +452,19 @@ namespace JiraSync
             return jiraService;
         }
 
-
-        internal string GetComponents(JiraService jiraService, List<Component> components, string issueComponent)
+        /// <summary>
+        /// Get the components for the issue, it will check if the component is already exist in the issue, if not it will add the component to the issue.
+        /// </summary>
+        /// <param name="jiraService"></param>
+        /// <param name="components"></param>
+        /// <param name="issueDto"></param>
+        /// <returns></returns>
+        internal string GetComponents(JiraService jiraService, List<Components> components, IssueDto issueDto)
         {
-            foreach (Component component in components)
+            string issueComponent = issueDto.Entity.Components;
+            foreach (Components component in components)
             {
-
-                string value = GetTarget(jiraService, component.Name).ToString();
+                string value = GetTarget(jiraService, component.Name, issueDto, MappingProperty.components).ToString();
                 string newValue = issueComponent.PadRight(1) == "|" ? value : "|" + value;
                 if (!issueComponent.Contains(value) && int.Parse(value) > 0)
                 {
@@ -350,31 +478,70 @@ namespace JiraSync
 
         }
 
-
+        /// <summary>
+        /// Get the hash code for the issue based on the properties that we want to compare, 
+        /// in this case we are comparing StatusId, ResolutionId, Components, ProjectId, FixedInVersionId, TypeId and Description length.
+        /// </summary>
+        /// <param name="issueDto"></param>
+        /// <returns></returns>
         internal int GetIssueHash(IssueDto issueDto)
         {
             string issueProp = issueDto.Entity.StatusId + issueDto.Entity.ResolutionId + issueDto.Entity.Components + issueDto.Entity.ProjectId + issueDto.Entity.FixedInVersionId + issueDto.Entity.TypeId + issueDto.Entity.Description.Length;
             return issueProp.GetHashCode();
         }
 
-        internal int GetTarget(JiraService jiraService, string source)
+        /// <summary>
+        /// Get the target id for the mapping based on the source value and the property type, 
+        /// if the mapping is not found, it will log a debug message and return 0 as target id.
+        /// </summary>
+        /// <param name="jiraService"></param>
+        /// <param name="source"></param>
+        /// <param name="issueDto"></param>
+        /// <param name="mappingProperty"></param>
+        /// <returns></returns>
+        internal string GetTarget(JiraService jiraService, string source, IssueDto issueDto, MappingProperty mappingProperty)
         {
             int id = 0;
             try
             {
                 id = jiraService.Mapping.First(s => s.Source == source).TargetId;
-                return id;
+                return id.ToString();
             }
             catch (Exception ex)
             {
-                LogDebugMessage($"Mapping Source not found:  {source}");
+                LogDebugMessage($"Mapping Source {mappingProperty} not found: {source}");
                 GeminiApp.LogException(ex, true, ex.Message);
             }
-            return id;
+            if (id == 0)
+            {
+                switch (mappingProperty)
+                {
+                    case MappingProperty.issuetype:
+                        return issueDto.Entity.TypeId.ToString();
+                    case MappingProperty.components:
+                        return issueDto.Entity.Components;
+                    case MappingProperty.status:
+                        return issueDto.Entity.StatusId.ToString();
+                    case MappingProperty.resolution:
+                        return issueDto.Entity.ResolutionId.ToString();
+                    case MappingProperty.priority:
+                        return issueDto.Entity.PriorityId.ToString();
+                    default:
+                        break;
+                }
+            }
+            return id.ToString();
+
 
         }
 
-
+        /// <summary>
+        /// Get the Jira browse url for the issue, it will return a string with the link to the Jira issue and the description of the Gemini issue,
+        /// </summary>
+        /// <param name="jiraService"></param>
+        /// <param name="issuekeyJira"></param>
+        /// <param name="descriptionGemini"></param>
+        /// <returns></returns>
         internal string GetJiraBrowseUrl(JiraService jiraService, string issuekeyJira, string descriptionGemini)
         {
             Uri jiraServiceUrl = new Uri(jiraService.JiraUrlSearch);
