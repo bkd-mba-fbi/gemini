@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("App.Config.json")]
 [assembly: AssemblyCompany("BKD-MBA-FBI")]
 [assembly: AssemblyProduct("JiraSync")]
-[assembly: AssemblyCopyright("Copyright © BKD-MBA-FBI 2024")]
+[assembly: AssemblyCopyright("Copyright © BKD-MBA-FBI 2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
