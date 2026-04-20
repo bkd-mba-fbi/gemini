@@ -22,7 +22,7 @@ The app is built as a Gemini extension (`TimerJob`) and runs regularly according
 - `JiraSync/JiraSync.cs` - main timer job implementation and synchronization logic.
 - `JiraSync/AppConfig.cs` - configuration model used by the app.
 - `JiraSync/JiraResponse.cs` - Jira API response model definitions.
-- `JiraSync/Appconfig.json` - example runtime configuration.
+- `JiraSync/AppConfig.json` - example runtime configuration.
 - `JiraSync/JiraSync.csproj` - project build settings and Gemini dependencies.
 
 ## Configuration
@@ -77,6 +77,40 @@ The app uses `AppConfig.json` with this structure:
 5. It tries to find an existing Gemini issue using the configured custom field value.
 6. If a Gemini issue exists, it updates type, priority, status, resolution, version, components, and description.
 7. If no Gemini issue exists and an issue type mapping exists, it creates a new Gemini issue.
+
+## Helper Methods
+
+### GetTextFormat
+Formats text content based on its type to apply proper HTML tags when converting Jira descriptions to Gemini format.
+
+**Signature:**
+```csharp
+public string GetTextFormat(string type, string text)
+```
+
+**Parameters:**
+- `type` (string): The type of text content (e.g., `paragraph`, `codeBlock`).
+- `text` (string): The text content to format.
+
+**Returns:**
+- (string): The formatted text with appropriate HTML tags applied.
+
+**Supported Types:**
+- `paragraph`: Wraps the text in `<p>` tags (e.g., `<p>text</p>`).
+- `codeBlock`: Wraps the text in `<code>` tags (e.g., `<code>text</code>`).
+- Other types: Returns the text unmodified.
+
+**Usage:**
+This method is used internally by `GetDescription()` to format Jira issue description content when converting from Jira's rich text format to Gemini's HTML format. It processes the content structure from Jira API responses and applies appropriate HTML formatting to preserve text styling.
+
+**Example:**
+```csharp
+string formatted = GetTextFormat("paragraph", "This is a paragraph");
+// Result: "<p>This is a paragraph</p>"
+
+string codeFormatted = GetTextFormat("codeBlock", "var x = 1;");
+// Result: "<code>var x = 1;</code>"
+```
 
 ## Build and deployment
 - Target framework: .NET Framework 4.8.

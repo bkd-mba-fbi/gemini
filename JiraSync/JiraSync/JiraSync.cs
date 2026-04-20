@@ -11,6 +11,7 @@ using Countersoft.Gemini;
 using Countersoft.Gemini.Commons.Dto;
 using Countersoft.Gemini.Commons.Entity;
 using Countersoft.Gemini.Extensibility.Apps;
+using Countersoft.Gemini.Infrastructure;
 using Countersoft.Gemini.Infrastructure.Managers;
 using Countersoft.Gemini.Infrastructure.TimerJobs;
 using JiraSync.Configuration;
@@ -32,6 +33,7 @@ namespace JiraSync
         private static AppConfig _appConfig = new AppConfig();
         private static IssueManager _issueManager;
         private static List<IssueDto> _geminiIssues;
+        private static List<IssueDto> _geminiIssuesClosed;
 
         /// <summary>
         /// Main method that will be called by the Gemini timer job, it will read the appconfig file, 
@@ -50,6 +52,7 @@ namespace JiraSync
             foreach (JiraService jiraService in appconfig.JiraServices)
             {
                 _geminiIssues = GetGeminiIssues(jiraService, false);
+                _geminiIssuesClosed = GetGeminiIssues(jiraService, true);
                 GetMappings(jiraService);
                 JiraSynch(jiraService);
 
@@ -233,11 +236,12 @@ namespace JiraSync
             {
                 if (item.Children != null)
                 {
-                    foreach (var content in item.Children)
+                    string typeParent = item.Type;
+                    foreach (Children content in item.Children)
                     {
                         if (content.Text != null)
-                        {
-                            description += $"<br><br>{content.Text}";
+                        {   
+                            description += GetTextFormat(typeParent, content.Text);
                         }
                     }
                 }
@@ -245,6 +249,25 @@ namespace JiraSync
 
             return description.Replace("\n", "<br>").Replace("\r", "<br>");
         }
+
+        /// <summary>
+        /// Format the text based on its type.
+        /// </summary>
+        /// <param name="type">The type of the text (e.g., paragraph, codeBlock).</param>
+        /// <param name="text">The text to format.</param>
+        /// <returns>The formatted text.    </returns>
+        public string GetTextFormat(string type, string text)
+        {
+            switch (type)   
+            {   case "paragraph":
+                    return $"<p>{text}</p>";
+                case "codeBlock":
+                    return $"<code>{text}</code>";    
+    
+                default:
+                    return text;
+            }
+        }   
 
         /// <summary>
         /// FinalTargetStatus is used to check if the issue is in the final target status, if it is in the final target status, it will not update the status of the issue in Gemini,
@@ -362,13 +385,18 @@ namespace JiraSync
             IssuesFilter filter = new IssuesFilter
             {
                 IncludeClosed = false,
+                RevisedAfter = DateTime.Now.AddMonths(-12).ToShortDateString()
             };
             
             if (includeClosed)
             {
                 filter.IncludeClosed = true;
-                filter.Projects = jiraService.TargetGeminProject;
-            }   
+                //filter.GetProjects().Where(s => s == jiraService.TargetGeminProjectId).ToList();
+                //filter.GetStatuses().Where(s => s == _issueManager.GeminiContext.Meta.StatusGet().First(st => st.Label == jiraService.FinalTargetStatus).Id).ToList();
+                filter.RevisedAfter = DateTime.Now.AddMonths(-6).ToShortDateString();
+                return _issueManager.GetIssues(filter, 3000).Where(s => s.ClosedDate.HasValue && s.CustomFields.Count > 0 && s.ProjectCode == jiraService.TargetGeminProject).ToList();
+            }
+           
             return _issueManager.GetIssues(filter, 1000).Where(c => c.CustomFields.Count() > 0).ToList();
 
         }
@@ -386,16 +414,16 @@ namespace JiraSync
             bool exists = false;
             foreach (IssueDto item in _geminiIssues)
             {
-                exists = item.CustomFields.Exists(f => f.Name == jiraService.GeminiCustomFieldJiraKey && f.Entity.Data == fremdId);
+                exists = item.CustomFields.Exists(f => f.Name == jiraService.GeminiCustomFieldJiraKey && f.Entity.Data.Contains(fremdId));
                 if (exists)
                 {
                     return item;
                 }
             }
       
-             foreach (IssueDto item in GetGeminiIssues(jiraService, true))
+             foreach (IssueDto item in _geminiIssuesClosed)
             {
-                exists = item.CustomFields.Exists(f => f.Name == jiraService.GeminiCustomFieldJiraKey && f.Entity.Data == fremdId);
+                exists = item.CustomFields.Exists(f => f.Name == jiraService.GeminiCustomFieldJiraKey && f.Entity.Data.Contains(fremdId));
                 if (exists)
                 {
                     return item;
