@@ -12,7 +12,7 @@ The app is built as a Gemini extension (`TimerJob`) and runs regularly according
 - Connects to Jira using username + personal access token (Basic auth).
 - Executes a Jira JQL search against `jiraUrlSearch`.
 - Maps Jira fields into Gemini fields using configured mappings.
-- Ensures Gemini versions exist for Jira fixVersions and updates their released state.
+- Ensures Gemini versions exist for Jira fixVersions.
 - Finds existing Gemini issues by a configured custom field value (e.g. `FremdId`).
 - Updates existing Gemini issues if mapped fields change.
 - Creates new Gemini issues when a Jira issue has no matching Gemini issue.
