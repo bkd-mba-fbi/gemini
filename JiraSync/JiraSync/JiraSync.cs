@@ -179,18 +179,21 @@ namespace JiraSync
                 foreach (FixVersions fixversion in jiraissue.Fields.FixVersions)
                 {
                     Countersoft.Gemini.Commons.Entity.Version exists = versions.Find(v => v.ProjectId == projectId && v.Name == fixversion.Name);
+                    /*
                     if (exists != null)
                     {
+
                         if (exists.Released != fixversion.Released)
                         {
-                            exists.Released = fixversion.Released;
 
+                            exists.Released = fixversion.Released;
                             _issueManager.GeminiContext.Versions.Update(exists);
                             LogDebugMessage($"Update Version {exists.Name}");
                         } 
-        
-                    }
-                    else
+                
+
+                    }*/
+                    if (exists == null)
                     {
 
                         Countersoft.Gemini.Commons.Entity.Version createVersion = new Countersoft.Gemini.Commons.Entity.Version
@@ -391,8 +394,6 @@ namespace JiraSync
             if (includeClosed)
             {
                 filter.IncludeClosed = true;
-                //filter.GetProjects().Where(s => s == jiraService.TargetGeminProjectId).ToList();
-                //filter.GetStatuses().Where(s => s == _issueManager.GeminiContext.Meta.StatusGet().First(st => st.Label == jiraService.FinalTargetStatus).Id).ToList();
                 filter.RevisedAfter = DateTime.Now.AddMonths(-6).ToShortDateString();
                 return _issueManager.GetIssues(filter, 3000).Where(s => s.ClosedDate.HasValue && s.CustomFields.Count > 0 && s.ProjectCode == jiraService.TargetGeminProject).ToList();
             }
@@ -533,6 +534,10 @@ namespace JiraSync
             try
             {
                 id = jiraService.Mapping.First(s => s.Source == source).TargetId;
+                if (id == 0)
+                {
+                    LogDebugMessage($"Mapping Target {mappingProperty} not found: {source}");
+                }
                 return id.ToString();
             }
             catch (Exception ex)
