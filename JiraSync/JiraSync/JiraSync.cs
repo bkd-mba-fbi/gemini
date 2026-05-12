@@ -329,8 +329,6 @@ namespace JiraSync
                     {
                         updateIssue.Entity.Description = GetJiraBrowseUrl(jiraService, fremdId, updateIssue.Description);
                     }
-
-                    updateIssue.Entity.Description = updateIssue.Description.Replace("\r\n", "<br>")
     ;
                     updateIssue.Entity.Components = GetComponents(jiraService, jiraissue.Fields.Components, updateIssue);
 
