@@ -25,7 +25,7 @@ namespace JiraSync
     [AppType(AppTypeEnum.Timer),
         AppGuid("4a348174-a464-4c09-aa62-c30eca557224"),
         AppName("Jira sync"),
-        AppDescription("")]
+        AppDescription("This application synchronizes data between Jira and Gemini. Configuration options and usage instructions are provided in the documentation.")]
     public class JiraGeminiSyncJob : TimerJob
     {
 
