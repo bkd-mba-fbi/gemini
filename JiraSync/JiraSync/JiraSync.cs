@@ -203,6 +203,7 @@ namespace JiraSync
                             Name = fixversion.Name,
                             Label = fixversion.Name,
                             Released = fixversion.Released,
+                            Sequence = versions.Count() + 1
                         };
 
                         createVersion = _issueManager.GeminiContext.Versions.Create(createVersion);
