@@ -344,7 +344,7 @@ namespace JiraSync
 
                 }
 
-                if (!updated && jiraService.Mapping.Exists(t => t.Property == "issuetype" && t.Source == jiraissue.Fields.Issuetype.Name))
+                if (!updated && jiraService.Mapping.Exists(t => t.Property == "issuetype" && t.Source == jiraissue.Fields.Issuetype.Name) && jiraissue.Fields.Status.StatusCategory.Key != "Done")
                 {
                     Countersoft.Gemini.Commons.Entity.Issue task = new Countersoft.Gemini.Commons.Entity.Issue
                     {
