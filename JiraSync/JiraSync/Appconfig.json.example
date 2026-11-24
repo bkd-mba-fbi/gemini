@@ -11,7 +11,7 @@
       },
       "targetGeminProject": "EVT",
       "geminiCustomFieldJiraKey": "FremdId",
-      "finalTargetStatus": "Geschlossen",
+      "finalTargetStatus": ["Geschlossen", "Lieferbereit"],
       "defaultComponent": "SLH",
       "mapping": [
         {

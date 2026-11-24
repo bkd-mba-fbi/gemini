@@ -28,7 +28,7 @@ namespace JiraSync.Configuration
             public int GeminiCustomFieldJiraKeyId { get; set; }
             public string DefaultComponent { get; set; }
             public int DefaultComponentId { get; set; }
-            public string FinalTargetStatus { get; set; }
+            public string[] FinalTargetStatus { get; set; }
             public List<Mapping> Mapping { get; set; }
         }
     

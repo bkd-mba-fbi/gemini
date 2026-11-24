@@ -280,7 +280,7 @@ namespace JiraSync
         /// <param name="issue"></param>
         /// <returns></returns>
         public bool FinalTargetStatus(JiraService jiraService, IssueDto issue) {
-            return jiraService.FinalTargetStatus == issue.Status;
+            return jiraService.FinalTargetStatus.Contains(issue.Status);
             }
 
         /// <summary>
