@@ -43,7 +43,7 @@ The app uses `AppConfig.json` with this structure:
       "targetGeminProject": "PROJECT_CODE", 
       "geminiCustomFieldJiraKey": "FremdId", 
       "defaultComponent": "DefaultComponentName", 
-      "finalTargetStatus": "Closed", 
+      "finalTargetStatus": ["Closed", "Done", "Resolved"], 
       "mapping": [ 
         { "property": "issuetype", "source": "Bug", "target": "Bug" },
         { "property": "priority", "source": "Blocker", "target": "High" },
@@ -61,7 +61,7 @@ The app uses `AppConfig.json` with this structure:
 - `geminiCustomFieldJiraKey` must match a Gemini custom field name that exists on the target project, and that field is used to store the Jira issue key.
 - `targetGeminProject` must be a Gemini project code.
 - `defaultComponent` must be a valid Gemini component name for the target project.
-- `finalTargetStatus` is a Gemini status name. If an issue already has this status, JiraSync will not change its status again.
+- `finalTargetStatus` is a Gemini status name. If an issue already has this status, JiraSync will not change its status again. Its a Array of string values, so you can specify multiple final target statuses instead of just one.
 - `mapping` entries are used to convert Jira values into Gemini IDs for the following properties:
   - `issuetype`
   - `priority`

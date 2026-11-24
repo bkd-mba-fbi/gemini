@@ -33,6 +33,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Countersoft.Foundation.Commons">
       <HintPath>..\..\..\..\..\..\webapps\Gemini\bin\Countersoft.Foundation.Commons.dll</HintPath>
